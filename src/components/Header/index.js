@@ -1,14 +1,40 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Container } from './styles';
-import logo from '../../assests/images/logo.png';
+import { Container, Content } from './styles';
+import { signOut } from '~/store/modules/auth/actions';
 
 export default function Header() {
+    const dispatch = useDispatch();
+    function handleSignOut() {
+        dispatch(signOut());
+    }
     return (
         <Container>
-            <Link to="/">
-                <img src={logo} alt="tiaNena" />
-            </Link>
+            <Content>
+                <nav>
+                    <ul>
+                        <Link to="/main">
+                            <li>HOME</li>
+                        </Link>
+                        <Link to="/auditorias">
+                            <li>AUDITORIAS</li>
+                        </Link>
+                        <Link to="/plano">
+                            <li>AÇÕES</li>
+                        </Link>
+                        <Link to="/indicadores">
+                            <li>INDICADORES</li>
+                        </Link>
+
+                        <Link to="/">
+                            <li onClick={handleSignOut}>SAIR</li>
+                        </Link>
+                    </ul>
+                </nav>
+            </Content>
         </Container>
     );
 }

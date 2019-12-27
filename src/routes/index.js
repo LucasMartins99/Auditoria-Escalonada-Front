@@ -5,8 +5,9 @@ import Route from './Route';
 
 import Login from '../pages/Login/index';
 import CreateUser from '../pages/CreateUser/index';
-
 import Main from '../pages/Main/index';
+import Operador from '../pages/Operador/index';
+import CreateAuditoria from '../pages/Auditoria/Create/index';
 
 export default function Routes() {
     return (
@@ -14,6 +15,12 @@ export default function Routes() {
             <Route path="/" exact component={Login} />
             <Route path="/register" component={CreateUser} />
             <Route path="/main" component={Main} isPrivate />
+            <Route path="/operador" component={Operador} isPrivate />
+            <Route
+                path="/create-auditoria"
+                component={CreateAuditoria}
+                isPrivate
+            />
         </Switch>
     );
 }

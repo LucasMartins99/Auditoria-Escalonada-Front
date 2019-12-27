@@ -1,26 +1,54 @@
 import styled from 'styled-components';
 
-// eslint-disable-next-line import/prefer-default-export
-export const ProductList = styled.ul`
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 20px;
-    list-style: none;
-    li {
+export const Container = styled.div`
+    max-width: 600px;
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    header {
         display: flex;
-        flex-direction: column;
-        background: #fff;
-        border-radius: 4px;
-        padding: 20px;
-    }
-    img {
         align-self: center;
-        max-width: 260px;
+        align-items: center;
+        button {
+            border: 0;
+            background: none;
+        }
+        strong {
+            color: #000;
+            font-size: 25px;
+            margin: 0 15px;
+        }
     }
-    > strong {
-        font-size: 16px;
-        line-height: 20px;
-        color: #333;
-        margin-top: 5px;
+    ul {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 15px;
+        margin-top: 30px;
+    }
+`;
+export const Time = styled.li`
+    padding: 20px;
+    border-radius: 4px;
+    background: #fff;
+    strong {
+        display: block;
+        color: ${props => (props.atrasado ? 'red' : '#7159c1')};
+        font-size: 20px;
+        font-weight: normal;
+    }
+    div {
+        display: flex;
+        justify-content: flex-end;
+    }
+    opacity: ${props => (props.realizado ? 0.6 : 1)};
+    p {
+        color: #000;
+        font-size: 18px;
+        padding-top: 18px;
+    }
+    span {
+        display: block;
+        margin-top: 3px;
+        color: #666;
     }
 `;

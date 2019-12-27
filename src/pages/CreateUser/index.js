@@ -18,6 +18,7 @@ const options = [
 ];
 
 const schema = Yup.object().shape({
+    name: Yup.string().required('Nome obrigatório'),
     email: Yup.string()
         .email('Insira um e-mail válido')
         .required('O e-mail é obrigatório'),
@@ -29,14 +30,19 @@ const schema = Yup.object().shape({
 export default function CreateUser() {
     const dispatch = useDispatch();
 
-    function handleSubmit({ name, email, password, cargo }) {
-        dispatch(createUserRequest(name, email, password, cargo));
+    function handleSubmit({ name, email, password }) {
+        dispatch(createUserRequest(name, email, password));
     }
 
     return (
         <>
             <img src={logo} alt="logo" />
             <Form schema={schema} onSubmit={handleSubmit}>
+                <Input
+                    name="name"
+                    type="text"
+                    placeholder="Seu Nome e Sobrenome"
+                />
                 <Input name="email" type="email" placeholder="Seu e-mail" />
                 <Input
                     name="password"
@@ -44,8 +50,8 @@ export default function CreateUser() {
                     placeholder="Digite sua senha secreta"
                 />
                 <Select
-                    placeholder="Escolha seu cargo"
                     name="cargo"
+                    placeholder="Escolha seu cargo"
                     options={options}
                 />
                 <button type="submit">Criar conta</button>
