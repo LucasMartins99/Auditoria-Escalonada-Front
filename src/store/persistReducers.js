@@ -6,7 +6,7 @@ export default reducers => {
         {
             key: 'auditoriaescalonada',
             storage,
-            whitelist: ['auth', 'user'],
+            whitelist: ['auth', 'user', 'auditoria'],
         },
         reducers
     );

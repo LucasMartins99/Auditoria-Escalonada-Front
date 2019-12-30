@@ -1,39 +1,36 @@
 import styled from 'styled-components';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const Container = styled.div`
-    max-width: 600px;
+    max-width: 650px;
     margin: 50px auto;
     display: flex;
     flex-direction: column;
 `;
 
-export const AuditoriaTable = styled.table`
-    width: 100%;
-    tbody {
-        overflow-y: scroll;
-        height: 350px;
+export const TableDiv = styled.div`
+    width: 93%;
+    font-size: 18.4px;
+    tr {
+        display: flex;
+    }
+    td {
+        justify-content: space-between;
+        justify-items: center;
+        align-items: center;
+    }
+    th {
+        width: 200px;
+        text-align: center;
     }
 
-    thead,
-    tbody {
+    thead > tr {
+        position: relative;
         display: block;
     }
-
-    td {
-        padding: 15px;
-        width: 100%;
-    }
-    select {
-        background: grey;
-        border: 0;
-        border-radius: 4px;
-        height: 33px;
-        padding: 0 7px;
-        color: #fff;
-        margin: 0 0 10px;
-
-        &::placeholder {
-            color: #fff;
-        }
+    tbody {
+        display: block;
+        height: 400px;
+        overflow: auto;
     }
 `;
