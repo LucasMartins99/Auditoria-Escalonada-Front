@@ -9,10 +9,12 @@ import {
 } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { MdChevronLeft, MdChevronRight, MdModeEdit } from 'react-icons/md';
-import { useSelector } from 'react-redux';
-import api from '~/services/api';
+import { useSelector, useDispatch } from 'react-redux';
+import { Button } from 'react-bootstrap';
 
+import api from '~/services/api';
 import { Container, Time } from './styles';
+import { addSetorRequest } from '~/store/modules/setor/actions';
 
 export default function Main() {
     const auditor = useSelector(state => state.user.profile.name);
@@ -61,6 +63,11 @@ export default function Main() {
         setDate(subMonths(date, 1));
     }
 
+    const dispatch = useDispatch();
+    function handleSetor(id) {
+        dispatch(addSetorRequest(id));
+    }
+
     return (
         <Container>
             <header>
@@ -83,7 +90,13 @@ export default function Main() {
                         <p>{auditoria.setor}</p>
                         <span>{auditoria.status}</span>
                         <div>
-                            <MdModeEdit size={22} color="#000" />
+                            <Button
+                                variant="secondary"
+                                onClick={() => handleSetor(auditoria.id)}
+                            >
+                                Realizar
+                                <MdModeEdit size={22} color="#000" />
+                            </Button>
                         </div>
                     </Time>
                 ))}

@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { Form, Input, Select } from '@rocketseat/unform';
 import * as Yup from 'yup';
 import { Container } from './styles';
+import DatePicker from '../../../components/DatePicker/index';
 import * as CartActions from '../../../store/modules/auditoria/actions';
 
 const options = [
@@ -35,6 +36,8 @@ async function handleSubmit(data) {}
 
 function CreatePlan({ auditoria }) {
     const profile = useSelector(state => state.user.profile);
+    const setor = useSelector(state => state.setor.setor);
+
     return (
         <Container>
             <header>
@@ -49,15 +52,16 @@ function CreatePlan({ auditoria }) {
                             placeholder="Descreva o problema"
                         />
                         <Input name="auditor" value={profile.name} />
-                        <Input name="setor" value="morita" />
+                        <Input name="setor" value={setor.setor} />
                         <Input name="maquina" placeholder="maquina" />
                         <Input
                             name="acao"
                             placeholder="Ação corretiva se souber"
                         />
+                        <DatePicker name="date" placeholder="Data" />
                         <Select
                             name="cargo"
-                            placeholder="Escolha seu cargo"
+                            placeholder="Escolha o resposavel"
                             options={options}
                         />
                     </content>
