@@ -7,6 +7,7 @@ import Login from '../pages/Login/index';
 import CreateUser from '../pages/CreateUser/index';
 import Main from '../pages/Main/index';
 import Operador from '../pages/Operador/index';
+import CreatePlan from '../pages/Plano/Create/index';
 import CreateAuditoria from '../pages/Auditoria/Create/index';
 
 export default function Routes() {
@@ -21,6 +22,7 @@ export default function Routes() {
                 component={CreateAuditoria}
                 isPrivate
             />
+            <Route path="/create-plano" component={CreatePlan} isPrivate />
         </Switch>
     );
 }

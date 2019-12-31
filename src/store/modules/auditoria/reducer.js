@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { toast } from 'react-toastify';
 
 export default function auditoria(state = [], action) {
     switch (action.type) {
@@ -6,6 +7,14 @@ export default function auditoria(state = [], action) {
             return produce(state, draft => {
                 const { question } = action;
                 draft.push(question);
+            });
+        case '@question/REMOVE':
+            return produce(state, draft => {
+                const questionIndex = draft.findIndex(q => q.id === action.id);
+                toast.success('Item registrado com sucesso');
+                if (questionIndex >= 0) {
+                    draft.splice(questionIndex, 1);
+                }
             });
         default:
             return state;

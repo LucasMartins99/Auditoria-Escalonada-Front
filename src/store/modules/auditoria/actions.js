@@ -11,3 +11,9 @@ export function addToQuestionSucess(question) {
         question,
     };
 }
+export function removeFromQuestion(id) {
+    return {
+        type: '@question/REMOVE',
+        id,
+    };
+}
