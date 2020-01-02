@@ -5,6 +5,7 @@ import { MdDone, MdReply } from 'react-icons/md';
 import { Container, TableDiv } from './styles';
 import api from '~/services/api';
 import { Button, ButtonGroup, Table } from 'react-bootstrap';
+import history from '~/services/history';
 
 import * as CartActions from '~/store/modules/auditoria/actions';
 
@@ -28,18 +29,26 @@ class Auditoria extends Component {
         const { removeFromQuestion } = this.props;
         removeFromQuestion(id);
     };
+         render() {
 
-    render() {
         const { questions } = this.state;
+        function handleBack() {
+            history.push('/main');
+        }
+
+        function handleNext(){
+            history.push('/create-plano')
+        }
+
         return (
             <Container>
                 <header>
-                    <p>Cadastro Auditoria</p>
-                    <button type="submit">
-                        <MdReply size={15} color="#fff" />
+                <button type="button" onClick={handleBack}>
+                        <MdReply size={40} color="#000" />
                     </button>
-                    <button type="submit">
-                        <MdDone size={15} color="#fff" />
+                    <strong>Formulario Auditoria</strong>
+                    <button type="button" onClick={handleNext}>
+                        <MdDone size={40} color="#000" />
                     </button>
                 </header>
                 <TableDiv>

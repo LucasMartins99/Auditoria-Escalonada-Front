@@ -2,21 +2,53 @@ import styled from 'styled-components';
 import { darken } from 'polished';
 
 export const Container = styled.div`
-    padding: 40px;
+    max-width: 600px;
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    header {
+        display: flex;
+        align-self: center;
+        align-items: center;
+        button {
+            border: 0;
+            background: none;
+        }
+        strong {
+            color: #000;
+            font-size: 25px;
+            margin: 0 15px;
+        }
+    }
+`;
+
+export const Center = styled.div`
+    height: 100%;
+    display: flex;
+    justify-content: column;
+    align-items: center;
+`;
+export const Card = styled.div`
+    padding-top: 15px;
+    width: 100%;
+    max-width: 315px;
+    text-align: center;
     background: #fff;
-    border-radius: 4px;
+    border-radius: 8px;
+    opacity: 80%;
 
     form {
         display: flex;
-        flex-direction: column;
-        align-items: center;
+        flex-direction: row;
         input {
             background: grey;
-            border-radius: 3px;
-            height: 40px;
-            padding: 20px;
+            border: 0;
+            border-radius: 4px;
+            height: 44px;
+            padding: 0 15px;
             color: #fff;
             margin: 0 0 10px;
+
             &::placeholder {
                 color: rgba(255, 255, 255, 0.7);
             }
@@ -24,7 +56,8 @@ export const Container = styled.div`
 
         select {
             background: grey;
-            border-radius: 3px;
+            border: 0;
+            border-radius: 4px;
             height: 44px;
             padding: 0 15px;
             color: #fff;
@@ -47,7 +80,7 @@ export const Container = styled.div`
             font-weight: bold;
             color: #fff;
             border: 0;
-            border-radius: 3px;
+            border-radius: 4px;
             font-size: 16px;
             transition: background 0.2;
             &:hover {
@@ -59,6 +92,17 @@ export const Container = styled.div`
             padding: 20px;
             font-size: 17px;
             opacity: 0.8;
+        }
+    }
+    header {
+        display: flex;
+        align-self: center;
+        align-items: center;
+
+        strong {
+            color: #000;
+            font-size: 25px;
+            margin: 0 15px;
         }
     }
 `;

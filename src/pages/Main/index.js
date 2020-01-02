@@ -48,7 +48,7 @@ export default function Main() {
     let realizado = false;
     // eslint-disable-next-line array-callback-return
     agenda.map(auditoria => {
-        if (auditoria.semana > actualWeek && auditoria.status === 'Planejado') {
+        if (auditoria.semana < actualWeek && auditoria.status === 'Planejado') {
             late = true;
         }
         if (auditoria.status === 'Realizado') {
