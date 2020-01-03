@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { darken } from 'polished';
 
 export const Container = styled.div`
-    max-width: 600px;
+    max-width: 750px;
     margin: 50px auto;
     display: flex;
     flex-direction: column;
@@ -10,6 +10,7 @@ export const Container = styled.div`
         display: flex;
         align-self: center;
         align-items: center;
+
         button {
             border: 0;
             background: none;
@@ -23,28 +24,26 @@ export const Container = styled.div`
 `;
 
 export const Center = styled.div`
-    height: 100%;
-    display: flex;
-    justify-content: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 40px;
+    list-style: none;
+    padding-top: 30px;
 `;
 export const Card = styled.div`
-    padding-top: 15px;
-    width: 100%;
-    max-width: 315px;
-    text-align: center;
     background: #fff;
-    border-radius: 8px;
-    opacity: 80%;
-
+    border-radius: 4px;
     form {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        background: #fff;
+        border-radius: 4px;
+        padding: 10px;
         input {
             background: grey;
             border: 0;
             border-radius: 4px;
-            height: 44px;
+            height: 40px;
             padding: 0 15px;
             color: #fff;
             margin: 0 0 10px;
@@ -56,10 +55,10 @@ export const Card = styled.div`
 
         select {
             background: grey;
-            border: 0;
+
             border-radius: 4px;
-            height: 44px;
-            padding: 0 15px;
+            height: 40px;
+            padding: 0 17px;
             color: #fff;
             margin: 0 0 10px;
 

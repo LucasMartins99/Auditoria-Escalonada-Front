@@ -3,6 +3,8 @@ import React from 'react';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Form, Input, Select } from '@rocketseat/unform';
+import { format } from 'date-fns';
+import pt from 'date-fns/locale/pt';
 import * as Yup from 'yup';
 
 import { Container, Card, Center } from './styles';
@@ -33,12 +35,17 @@ const schema = Yup.object().shape({
     prazo: Yup.date(),
     conclusao: Yup.date(),
 });
-async function handleSubmit(data) {}
-const date = new Date();
+const handleSubmit = data => {
+    data.data = format(data.data, 'yyy/MM/dd', { locale: pt });
+};
 
 function CreatePlan({ auditoria }) {
     const profile = useSelector(state => state.user.profile);
     const setor = useSelector(state => state.setor.setor);
+
+    const initialData = {
+        data: new Date(),
+    };
 
     return (
         <Container>
@@ -46,11 +53,12 @@ function CreatePlan({ auditoria }) {
                 <strong>PLANO DE AÇÃO</strong>
             </header>
             <Center>
-                <Card>
-                    {auditoria.map(question => (
+                {auditoria.map(question => (
+                    <Card key={question.item}>
                         <Form
                             id="planForm"
                             onSubmit={handleSubmit}
+                            initialData={initialData}
                             schema={schema}
                         >
                             <content>
@@ -66,26 +74,24 @@ function CreatePlan({ auditoria }) {
                                     name="acao"
                                     placeholder="Ação corretiva se souber"
                                 />
-                                <DatePicker
-                                    name="data"
-                                    id="data"
-                                    locale="pt"
-                                    dateFormat="dd/MM/yyyy"
-                                    value={date}
-                                />
+
+                                <DatePicker name="data" />
+
                                 <Select
                                     name="cargo"
                                     placeholder="Escolha o resposavel"
                                     options={options}
                                 />
                             </content>
+                            <button type="submit">Enviar</button>
                         </Form>
-                    ))}
-                </Card>
+                    </Card>
+                ))}
             </Center>
         </Container>
     );
 }
+
 const mapStateToProps = state => ({
     auditoria: state.auditoria.map(question => ({
         ...question,

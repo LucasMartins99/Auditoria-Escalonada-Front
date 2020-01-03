@@ -16,6 +16,11 @@ export default function auditoria(state = [], action) {
                     draft.splice(questionIndex, 1);
                 }
             });
+        case '@auth/SIGN_OUT':
+            return produce(state, draft => {
+                const { question } = action;
+                draft.splice(question);
+            });
         default:
             return state;
     }
