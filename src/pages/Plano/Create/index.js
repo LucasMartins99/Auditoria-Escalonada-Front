@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { connect, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { Form, Input, Select } from '@rocketseat/unform';
 import { format } from 'date-fns';
 import pt from 'date-fns/locale/pt';
@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 
 import { Container, Card, Center } from './styles';
 import DatePicker from '../../../components/DatePicker/index';
-import * as CartActions from '../../../store/modules/auditoria/actions';
+import * as CartActions from '../../../store/modules/plan/actions';
 
 const options = [
     { id: 'Engenharia', title: 'Engenharia' },
@@ -35,13 +35,22 @@ const schema = Yup.object().shape({
     prazo: Yup.date(),
     conclusao: Yup.date(),
 });
-const handleSubmit = data => {
-    data.data = format(data.data, 'yyy/MM/dd', { locale: pt });
-};
 
-function CreatePlan({ auditoria }) {
+export default function CreatePlan() {
+    const dispatch = useDispatch();
+
+    const handleSubmit = data => {
+        data.data = format(data.data, 'yyy/MM/dd', { locale: pt });
+        dispatch(CartActions.addToPlanRequest(data));
+    };
     const profile = useSelector(state => state.user.profile);
     const setor = useSelector(state => state.setor.setor);
+
+    const auditoria = useSelector(state =>
+        state.auditoria.map(question => ({
+            ...question,
+        }))
+    );
 
     const initialData = {
         data: new Date(),
@@ -91,12 +100,3 @@ function CreatePlan({ auditoria }) {
         </Container>
     );
 }
-
-const mapStateToProps = state => ({
-    auditoria: state.auditoria.map(question => ({
-        ...question,
-    })),
-});
-const mapDispatchToProps = dispatch =>
-    bindActionCreators(CartActions, dispatch);
-export default connect(mapStateToProps, mapDispatchToProps)(CreatePlan);
