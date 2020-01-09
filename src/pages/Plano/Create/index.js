@@ -38,10 +38,11 @@ const schema = Yup.object().shape({
 
 export default function CreatePlan() {
     const dispatch = useDispatch();
+    const auditoria_id = useSelector(state => state.setor.setor.id);
 
     const handleSubmit = data => {
         data.data = format(data.data, 'yyy/MM/dd', { locale: pt });
-        dispatch(CartActions.addToPlanRequest(data));
+        dispatch(CartActions.addToPlanRequest(data, auditoria_id));
     };
     const profile = useSelector(state => state.user.profile);
     const setor = useSelector(state => state.setor.setor);
@@ -87,7 +88,7 @@ export default function CreatePlan() {
                                 <DatePicker name="data" />
 
                                 <Select
-                                    name="cargo"
+                                    name="responsavel"
                                     placeholder="Escolha o resposavel"
                                     options={options}
                                 />
