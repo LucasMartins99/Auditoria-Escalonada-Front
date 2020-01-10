@@ -4,9 +4,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const Container = styled.div`
     max-width: 1305px;
-    margin: 50px auto;
+    margin: 30px auto;
     display: flex;
     flex-direction: column;
+
     button {
         border: 0;
         background: none;
@@ -14,16 +15,25 @@ export const Container = styled.div`
 
     header {
         display: flex;
-        align-self: center;
+        align-self: initial;
         align-items: center;
+        justify-content: space-between;
+        color: #000;
+        font-size: 32px;
+        margin: 0 10px;
+        p {
+            font-size: 15px;
+            padding: 3px;
+        }
+        div.legenda {
+            border-style: ridge;
+            border-radius: 10px;
 
-        strong {
-            color: #000;
-            font-size: 25px;
-            margin: 0 15px;
+            border-color: white;
         }
     }
 `;
+
 export const TableDiv = styled.div`
     padding-top: 30px;
 

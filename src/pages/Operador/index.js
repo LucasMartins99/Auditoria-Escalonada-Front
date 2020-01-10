@@ -15,6 +15,7 @@ import pt from 'date-fns/locale/pt';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import { Table } from 'react-bootstrap';
 import Emoji from 'a11y-react-emoji';
+import { useSelector } from 'react-redux';
 import api from '~/services/api';
 import { Container, TableDiv } from './styles';
 
@@ -25,6 +26,7 @@ export default function Operador() {
     const [emojiT1, setEmojiT1] = useState('');
     const [emojiT2, setEmojiT2] = useState('');
     const [emojiT3, setEmojiT3] = useState('');
+    const setor = useSelector(state => state.user.profile.setor);
 
     useEffect(() => {
         async function loadAuditoria() {
@@ -90,6 +92,8 @@ export default function Operador() {
     useEffect(() => {
         if (todaySegunda) {
             setEmojiT1('❔');
+            setEmojiT2('❔');
+            setEmojiT3('❔');
         } else {
             setEmojiT1('');
         }
@@ -98,14 +102,27 @@ export default function Operador() {
     return (
         <Container>
             <header>
-                <button type="button" onClick={handlePrevWeek}>
-                    <MdChevronLeft size={36} color="#000" />
-                </button>
-                <strong>SEMANA: {actualWeek}</strong>
-                <button type="button" onClick={handleNextWeek}>
-                    <MdChevronRight size={36} color="#000" />
-                </button>
+                <div className="legenda">
+                    <p>OK = ✔️</p>
+                    <p>PLANEJADO = ❔ </p>
+                    <p>ATRASADO = 😡</p>
+                    <p>AÇÃO = 🙁 </p>
+                </div>
+                <span />
+
+                <div>
+                    <button type="button" onClick={handlePrevWeek}>
+                        <MdChevronLeft size={55} color="#000" />
+                    </button>
+                    <strong>SEMANA: {actualWeek}</strong>
+                    <button type="button" onClick={handleNextWeek}>
+                        <MdChevronRight size={55} color="#000" />
+                    </button>
+                </div>
+                <span />
+                <span />
             </header>
+
             <TableDiv>
                 <Table responsive bordered>
                     <thead>
