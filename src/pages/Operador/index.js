@@ -9,7 +9,6 @@ import {
     subWeeks,
     eachDayOfInterval,
     isBefore,
-    isSameDay,
 } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
@@ -21,18 +20,22 @@ import { Container, TableDiv } from './styles';
 
 export default function Operador() {
     const [date, setDate] = useState(new Date());
-    const [auditoria, setAuditoria] = useState([]);
+    const [auditorias, setAuditoria] = useState([]);
     const [plano, setPlano] = useState([]);
     const [emojiT1, setEmojiT1] = useState('');
     const [emojiT2, setEmojiT2] = useState('');
     const [emojiT3, setEmojiT3] = useState('');
     const setor = useSelector(state => state.user.profile.setor);
 
+    const actualWeek = getISOWeek(date);
+
     useEffect(() => {
         async function loadAuditoria() {
-            const response = await api.get('auditoria');
-            const data = response.data.map(auditorias => ({
-                ...auditorias,
+            const response = await api.get('auditorias-semana', {
+                params: { setor, actualWeek },
+            });
+            const data = response.data.map(a => ({
+                ...a,
             }));
             setAuditoria(data);
         }
@@ -51,8 +54,6 @@ export default function Operador() {
         loadPlano();
     }, []);
 
-    const actualWeek = getISOWeek(date);
-
     const firstDay = startOfWeek(date);
     const lastDay = endOfWeek(date);
     const daysWeek = eachDayOfInterval(
@@ -61,11 +62,17 @@ export default function Operador() {
     );
 
     const segunda = format(daysWeek[1], 'dd-MM-yyyy', { locale: pt });
+    const segundaBD = format(daysWeek[1], 'yyyy-MM-dd', { locale: pt });
     const terça = format(daysWeek[2], 'dd-MM-yyyy', { locale: pt });
+    const terçaBD = format(daysWeek[2], 'yyyy-MM-dd', { locale: pt });
     const quarta = format(daysWeek[3], 'dd-MM-yyyy', { locale: pt });
+    const quartaBD = format(daysWeek[3], 'yyyy-MM-dd', { locale: pt });
     const quinta = format(daysWeek[4], 'dd-MM-yyyy', { locale: pt });
+    const quintaBD = format(daysWeek[4], 'yyyy-MM-dd', { locale: pt });
     const sexta = format(daysWeek[5], 'dd-MM-yyyy', { locale: pt });
+    const sextaBD = format(daysWeek[5], 'yyyy-MM-dd', { locale: pt });
     const sabado = format(daysWeek[6], 'dd-MM-yyyy', { locale: pt });
+    const sabadoBD = format(daysWeek[6], 'yyyy-MM-dd', { locale: pt });
 
     function handleNextWeek() {
         setDate(addWeeks(date, 1));
@@ -82,21 +89,29 @@ export default function Operador() {
     const emojiQuinta = isBefore(daysWeek[4], date);
     const emojiSexta = isBefore(daysWeek[5], date);
     const emojiSabado = isBefore(daysWeek[6], date);
-    const todaySegunda = isSameDay(new Date(), daysWeek[1]);
+    /* const todaySegunda = isSameDay(new Date(), daysWeek[1]);
     const todayTerça = isSameDay(new Date(), daysWeek[2]);
     const todayQuarta = isSameDay(new Date(), daysWeek[3]);
     const todayQuinta = isSameDay(new Date(), daysWeek[4]);
     const todaySexta = isSameDay(new Date(), daysWeek[5]);
-    const todaySabado = isSameDay(new Date(), daysWeek[6]);
+    const todaySabado = isSameDay(new Date(), daysWeek[6]); */
 
     useEffect(() => {
-        if (todaySegunda) {
-            setEmojiT1('❔');
-            setEmojiT2('❔');
-            setEmojiT3('❔');
-        } else {
-            setEmojiT1('');
-        }
+        
+        auditorias.forEach(a => {
+            if (a.data === segundaBD) {
+                setEmojiT1('✔️');
+            } else {
+                setEmojiT1('');
+            }
+        });
+        plano.forEach(a => {
+            if (a.auditoria.data === segundaBD) {
+                setEmojiT1('🙁');
+            } else {
+                setEmojiT1('');
+            }
+        });
     });
 
     return (
@@ -106,9 +121,8 @@ export default function Operador() {
                     <p>OK = ✔️</p>
                     <p>PLANEJADO = ❔ </p>
                     <p>ATRASADO = 😡</p>
-                    <p>AÇÃO = 🙁 </p>
+                    <p>PROBLEMA = 🙁 </p>
                 </div>
-                <span />
 
                 <div>
                     <button type="button" onClick={handlePrevWeek}>
@@ -118,6 +132,9 @@ export default function Operador() {
                     <button type="button" onClick={handleNextWeek}>
                         <MdChevronRight size={55} color="#000" />
                     </button>
+                </div>
+                <div>
+                    <strong>SETOR : {setor}</strong>
                 </div>
                 <span />
                 <span />
@@ -177,32 +194,15 @@ export default function Operador() {
                         <tr>
                             <td>Documentação e registros operacionais</td>
                             <td>
-                                {emojiSegunda ? (
+                                {emojiSegunda && (
                                     <button type="button">
-                                        <Emoji symbol={emojiT1} />
+                                        <h2>
+                                            <Emoji symbol={emojiT1} />
+                                        </h2>
                                     </button>
-                                ) : (
-                                    ''
                                 )}
                             </td>
-                            <td>
-                                {emojiSegunda ? (
-                                    <button type="button">
-                                        <Emoji symbol={emojiT2} />
-                                    </button>
-                                ) : (
-                                    ''
-                                )}
-                            </td>
-                            <td>
-                                {emojiSegunda ? (
-                                    <button type="button">
-                                        <Emoji symbol={emojiT3} />
-                                    </button>
-                                ) : (
-                                    ''
-                                )}
-                            </td>
+
                             <td>
                                 {emojiTerça && (
                                     <button type="button">
