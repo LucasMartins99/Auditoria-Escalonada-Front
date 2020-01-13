@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const Container = styled.div`
-    max-width: 1305px;
     margin: 30px auto;
     display: flex;
     flex-direction: column;

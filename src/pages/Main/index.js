@@ -25,7 +25,7 @@ export default function Main() {
     const dateFormatted = useMemo(() => format(date, 'MMMM', { locale: pt }), [
         date,
     ]);
-    const actualWeek = getISOWeek(date);
+    const actualWeek = getISOWeek(new Date());
     const firstDay = startOfMonth(date);
     const lastDay = endOfMonth(date);
     const firstWeek = getISOWeek(firstDay);
@@ -43,11 +43,12 @@ export default function Main() {
             setAgenda(data);
         }
         loadAgenda();
-    });
+    }, [auditor, firstWeek, lastWeek]);
     let late = false;
     let realizado = false;
     // eslint-disable-next-line array-callback-return
-    agenda.map(auditoria => {
+
+    agenda.forEach(auditoria => {
         if (auditoria.semana < actualWeek && auditoria.status === 'Planejado') {
             late = true;
         }
