@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import {
@@ -23,14 +24,31 @@ export default function Operador() {
     const [date, setDate] = useState(new Date());
     const [auditorias, setAuditoria] = useState([]);
     const [plano, setPlano] = useState([]);
-    const [emojiT1Segunda1, setEmojiT1Segunda1] = useState('');
-    const [emojiT1Terça1, setEmojiT1Terça1] = useState('');
-    const [emojiT1Quarta1, setEmojiT1Quarta1] = useState('');
-    const [emojiT1Quinta1, setEmojiT1Quinta1] = useState('');
-    const [emojiT1Sexta1, setEmojiT1Sexta1] = useState('');
-    const [emojiT1Sabado1, setEmojiT1Sabado1] = useState('');
-    const [emojiT2Segunda1, setEmojiT2Segunda1] = useState('');
-    const [emojiT3Segunda1, setEmojiT3Segunda1] = useState('');
+    
+    const [emojiT1Segunda, setEmojiT1Segunda] = useState({item1: 1, item2: 2});
+    const [emojiT1Terça, setEmojiT1Terça] = useState([]);
+    const [emojiT1Quarta, setEmojiT1Quarta] = useState([]);
+    const [emojiT1Quinta, setEmojiT1Quinta] = useState([]);
+    const [emojiT1Sexta, setEmojiT1Sexta] = useState([]);
+    const [emojiT1Sabado, setEmojiT1Sabado] = useState([]);
+
+    const [emojiT2Segunda, setEmojiT2Segunda] = useState([]);
+    const [emojiT2Terça, setEmojiT2Terça] = useState([]);
+    const [emojiT2Quarta, setEmojiT2Quarta] = useState([]);
+    const [emojiT2Quinta, setEmojiT2Quinta] = useState([]);
+    const [emojiT2Sexta, setEmojiT2Sexta] = useState([]);
+    const [emojiT2Sabado, setEmojiT2Sabado] = useState([]);
+
+
+    const [emojiT3Segunda, setEmojiT3Segunda] = useState([]);
+    const [emojiT3Terça, setEmojiT3Terça] = useState([]);
+    const [emojiT3Quarta, setEmojiT3Quarta] = useState([]);
+    const [emojiT3Quinta, setEmojiT3Quinta] = useState([]);
+    const [emojiT3Sexta, setEmojiT3Sexta] = useState([]);
+    const [emojiT3Sabado, setEmojiT3Sabado] = useState([]);
+
+    
+
     const setor = useSelector(state => state.user.profile.setor);
 
     const actualWeek = getISOWeek(date);
@@ -88,6 +106,7 @@ export default function Operador() {
     }
 
     const feliz = true;
+   
 
     const emojiSegunda = isBefore(daysWeek[1], date);
     const emojiTerça = isBefore(daysWeek[2], date);
@@ -108,89 +127,282 @@ export default function Operador() {
     const planoT1 = plano.filter(a => a.auditoria.turno === '1');
     const planoT2 = plano.filter(b => b.auditoria.turno === '2');
     const planoT3 = plano.filter(c => c.auditoria.turno === '3');
-    console.log(planoT1);
-
-
+    let i;
     useEffect(() => {
         switch (todaySegunda) {
             case true:
-                setEmojiT1Segunda1('❔');
-                setEmojiT2Segunda1('❔');
-                setEmojiT3Segunda1('❔');
+                for (i = 1; i < 13; i++) {
+                    setEmojiT1Segunda('❔');
+                    setEmojiT2Segunda('❔');
+                    setEmojiT3Segunda('❔');
+                }
                 break;
             default:
-                setEmojiT1Segunda1('');
-                setEmojiT2Segunda1('');
-                setEmojiT3Segunda1('');
+                for (i = 1; i < 13; i++) {
+                    setEmojiT1Segunda('❔');
+                    setEmojiT2Segunda('❔');
+                    setEmojiT3Segunda('❔');
+                }
+        }
+        switch (todayTerça) {
+            case true:
+                for (i = 1; i < 13; i++) {
+                    setEmojiT1Terça('❔');
+                    setEmojiT2Terça('❔');
+                    setEmojiT3Terça('❔');
+                }
+                break;
+            default:
+                for (i = 1; i < 13; i++) {
+                    setEmojiT1Terça('❔');
+                    setEmojiT2Terça('❔');
+                    setEmojiT3Terça('❔');
+                }
         }
         if (!lateSegunda && !todaySegunda) {
-            setEmojiT1Segunda1('😡');
-            setEmojiT2Segunda1('😡');
-            setEmojiT3Segunda1('😡');
+            setEmojiT1Segunda({item1},10);
+                setEmojiT2Segunda('😡');
+                setEmojiT3Segunda('😡');
+            
         }
-
         auditoriasT1.forEach(a => {
             switch (a.data) {
                 case segundaBD:
-                    setEmojiT1Segunda1('✔️');
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT1Segunda('✔️');
+                        setEmojiT2Segunda('✔️');
+                        setEmojiT2Segunda('✔️');
+                    }
                     break;
                 case terçaBD:
-                    setEmojiT1Terça1('✔️');
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT1Terça('✔️');
+                        setEmojiT2Terça('✔️');
+                        setEmojiT2Terça('✔️');
+                    }
                     break;
                 case quartaBD:
-                    setEmojiT1Quarta1('✔️');
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT1Quarta('✔️');
+                        setEmojiT2Quarta('✔️');
+                        setEmojiT2Quarta('✔️');
+                    }
+                    break;
+                case quintaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT1Quinta('✔️');
+                        setEmojiT2Quinta('✔️');
+                        setEmojiT2Quinta('✔️');
+                    }
+                    break;
+                case sextaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT1Sexta('✔️');
+                        setEmojiT2Sexta('✔️');
+                        setEmojiT2Sexta('✔️');
+                    }
+                    break;
+                case sabadoBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT1Sabado('✔️');
+                        setEmojiT1Sabado('✔️');
+                        setEmojiT1Sabado('✔️');
+                    }
                     break;
                 default:
             }
         });
         auditoriasT2.forEach(a => {
-            if (a.data === segundaBD) {
-                setEmojiT2Segunda1('✔️');
-            }
-        });
-        auditoriasT3.forEach(a => {
-            if (a.data === segundaBD) {
-                setEmojiT3Segunda1('✔️');
-            }
-        });
-
-        planoT1.forEach(a => {
-            switch (a.area) {
-                case 1:
-                    if (a.auditoria.data === segundaBD) {
-                        setEmojiT1Segunda1('🙁');
+            switch (a.data) {
+                case segundaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT2Segunda('✔️');
+                        setEmojiT2Segunda('✔️');
+                        setEmojiT2Segunda('✔️');
                     }
-                    if (a.auditoria.data === terçaBD) {
-                        setEmojiT1Terça1('🙁');
+                    break;
+                case terçaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT2Terça('✔️');
+                        setEmojiT2Terça('✔️');
+                        setEmojiT2Terça('✔️');
                     }
-                    if (a.auditoria.data === quartaBD) {
-                        setEmojiT1Quarta1('🙁');
+                    break;
+                case quartaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT2Quarta('✔️');
+                        setEmojiT2Quarta('✔️');
+                        setEmojiT2Quarta('✔️');
                     }
-                    if (a.auditoria.data === quintaBD) {
-                        setEmojiT1Quinta1('🙁');
+                    break;
+                case quintaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT2Quinta('✔️');
+                        setEmojiT2Quinta('✔️');
+                        setEmojiT2Quinta('✔️');
                     }
-                    if (a.auditoria.data === sextaBD) {
-                        setEmojiT1Sexta1('🙁');
+                    break;
+                case sextaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT2Sexta('✔️');
+                        setEmojiT2Sexta('✔️');
+                        setEmojiT2Sexta('✔️');
                     }
-                    if (a.auditoria.data === sabadoBD) {
-                        setEmojiT1Sabado1('🙁');
+                    break;
+                case sabadoBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT2Sabado('✔️');
+                        setEmojiT2Sabado('✔️');
+                        setEmojiT2Sabado('✔️');
                     }
                     break;
                 default:
             }
         });
-        planoT2.forEach(a => {
-            if (a.auditoria.data === segundaBD && a.area === 1) {
-                setEmojiT2Segunda1('🙁');
+        auditoriasT3.forEach(a => {
+            switch (a.data) {
+                case segundaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT3Segunda('✔️');
+                        setEmojiT3Segunda('✔️');
+                        setEmojiT3Segunda('✔️');
+                    }
+                    break;
+                case terçaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT3Terça('✔️');
+                        setEmojiT3Terça('✔️');
+                        setEmojiT3Terça('✔️');
+                    }
+                    break;
+                case quartaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT3Quarta('✔️');
+                        setEmojiT3Quarta('✔️');
+                        setEmojiT3Quarta('✔️');
+                    }
+                    break;
+                case quintaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT3Quinta('✔️');
+                        setEmojiT3Quinta('✔️');
+                        setEmojiT3Quinta('✔️');
+                    }
+                    break;
+                case sextaBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT3Sexta('✔️');
+                        setEmojiT3Sexta('✔️');
+                        setEmojiT3Sexta('✔️');
+                    }
+                    break;
+                case sabadoBD:
+                    for (i = 1; i < 13; i++) {
+                        setEmojiT3Sabado('✔️');
+                        setEmojiT3Sabado('✔️');
+                        setEmojiT3Sabado('✔️');
+                    }
+                    break;
+                default:
             }
         });
-        planoT3.forEach(a => {
-            if (a.auditoria.data === segundaBD && a.area === 1) {
-                setEmojiT3Segunda1('🙁');
+        planoT1.forEach(t1 => {
+            switch (t1.area) {
+                case 1:
+                    if (t1.auditoria.data === segundaBD) {
+                        setEmojiT1Segunda[1]('🙁');
+                    }
+                    if (t1.auditoria.data === terçaBD) {
+                        setEmojiT1Terça[1]('🙁');
+                    }
+                    if (t1.auditoria.data === quartaBD) {
+                        setEmojiT1Quarta[1]('🙁');
+                    }
+                    if (t1.auditoria.data === quintaBD) {
+                        setEmojiT1Quinta[1]('🙁');
+                    }
+                    if (t1.auditoria.data === sextaBD) {
+                        setEmojiT1Sexta[1]('🙁');
+                    }
+                    if (t1.auditoria.data === sabadoBD) {
+                        setEmojiT1Sabado[1]('🙁');
+                    }
+                    break;
+                case 2:
+                    if (t1.auditoria.data === segundaBD) {
+                        setEmojiT1Segunda[2]('🙁');
+                    }
+                    if (t1.auditoria.data === terçaBD) {
+                        setEmojiT1Terça[2]('🙁');
+                    }
+                    if (t1.auditoria.data === quartaBD) {
+                        setEmojiT1Quarta[2]('🙁');
+                    }
+                    if (t1.auditoria.data === quintaBD) {
+                        setEmojiT1Quinta[2]('🙁');
+                    }
+                    if (t1.auditoria.data === sextaBD) {
+                        setEmojiT1Sexta[2]('🙁');
+                    }
+                    if (t1.auditoria.data === sabadoBD) {
+                        setEmojiT1Sabado[2]('🙁');
+                    }
+                    break;
+                default:
+            }
+        });
+        planoT2.forEach(t2 => {
+            switch (t2.area) {
+                case 1:
+                    if (t2.auditoria.data === segundaBD) {
+                        setEmojiT2Segunda[1]('🙁');
+                    }
+                    if (t2.auditoria.data === terçaBD) {
+                        setEmojiT2Terça[1]('🙁');
+                    }
+                    if (t2.auditoria.data === quartaBD) {
+                        setEmojiT2Quarta[1]('🙁');
+                    }
+                    if (t2.auditoria.data === quintaBD) {
+                        setEmojiT2Quinta[1]('🙁');
+                    }
+                    if (t2.auditoria.data === sextaBD) {
+                        setEmojiT2Sexta[1]('🙁');
+                    }
+                    if (t2.auditoria.data === sabadoBD) {
+                        setEmojiT2Sabado[1]('🙁');
+                    }
+                    break;
+                default:
+            }
+        });
+        planoT3.forEach(t3 => {
+            switch (t3.area) {
+                case 1:
+                    if (t3.auditoria.data === segundaBD) {
+                        setEmojiT3Segunda[1]('🙁');
+                    }
+                    if (t3.auditoria.data === terçaBD) {
+                        setEmojiT3Terça[1]('🙁');
+                    }
+                    if (t3.auditoria.data === quartaBD) {
+                        setEmojiT3Quarta[1]('🙁');
+                    }
+                    if (t3.auditoria.data === quintaBD) {
+                        setEmojiT3Quinta[1]('🙁');
+                    }
+                    if (t3.auditoria.data === sextaBD) {
+                        setEmojiT3Sexta[1]('🙁');
+                    }
+                    if (t3.auditoria.data === sabadoBD) {
+                        setEmojiT3Sabado[1]('🙁');
+                    }
+                    break;
+                default:
             }
         });
     });
-
+    console.log(emojiT1Segunda);
     return (
         <Container>
             <header>
@@ -274,7 +486,7 @@ export default function Operador() {
                                 {emojiSegunda && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol={emojiT1Segunda1} />
+                                            <Emoji symbol={emojiT1Segunda[1]}/>
                                         </h2>
                                     </button>
                                 )}
@@ -284,7 +496,7 @@ export default function Operador() {
                                 {emojiSegunda && (
                                     <button type="button">
                                         <h2>
-                                           <Emoji symbol={emojiT2Segunda1} />
+                                           <Emoji symbol={emojiT2Segunda} />
                                         </h2>
                                     </button>
                                 )}
@@ -293,7 +505,7 @@ export default function Operador() {
                                 {emojiSegunda && (
                                     <button type="button">
                                         <h2>
-                                        <Emoji symbol={emojiT3Segunda1} />
+                                        <Emoji symbol={emojiT3Segunda} />
                                         </h2>
                                     </button>
                                 )}
@@ -311,7 +523,7 @@ export default function Operador() {
                                 {emojiQuarta && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -338,7 +550,7 @@ export default function Operador() {
                                 {emojiQuinta && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -365,7 +577,7 @@ export default function Operador() {
                                 {emojiSexta && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -392,7 +604,7 @@ export default function Operador() {
                                 {emojiSabado && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -419,7 +631,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -446,7 +658,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -473,7 +685,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -531,7 +743,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -558,7 +770,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -585,7 +797,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -612,7 +824,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -639,7 +851,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -666,7 +878,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -693,7 +905,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -720,7 +932,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -777,7 +989,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -804,7 +1016,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -831,7 +1043,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -858,7 +1070,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -885,7 +1097,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -912,7 +1124,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -939,7 +1151,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -966,7 +1178,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1023,7 +1235,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1050,7 +1262,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1077,7 +1289,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1104,7 +1316,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1131,7 +1343,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1158,7 +1370,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1185,7 +1397,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1212,7 +1424,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1269,7 +1481,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1296,7 +1508,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1323,7 +1535,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1350,7 +1562,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1377,7 +1589,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1404,7 +1616,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1431,7 +1643,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1458,7 +1670,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1515,7 +1727,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1542,7 +1754,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1569,7 +1781,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1596,7 +1808,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1623,7 +1835,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1650,7 +1862,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1677,7 +1889,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1704,7 +1916,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1761,7 +1973,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1788,7 +2000,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1815,7 +2027,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1842,7 +2054,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1869,7 +2081,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1896,7 +2108,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1923,7 +2135,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -1950,7 +2162,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2007,7 +2219,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2034,7 +2246,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2061,7 +2273,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2088,7 +2300,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2115,7 +2327,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2142,7 +2354,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2169,7 +2381,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2196,7 +2408,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2253,7 +2465,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2280,7 +2492,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2307,7 +2519,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2334,7 +2546,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2361,7 +2573,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2388,7 +2600,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2415,7 +2627,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2442,7 +2654,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2499,7 +2711,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2526,7 +2738,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2553,7 +2765,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2580,7 +2792,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2607,7 +2819,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2634,7 +2846,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2661,7 +2873,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2688,7 +2900,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2745,7 +2957,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2772,7 +2984,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2799,7 +3011,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2826,7 +3038,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2853,7 +3065,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2880,7 +3092,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2907,7 +3119,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2934,7 +3146,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -2991,7 +3203,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -3018,7 +3230,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -3045,7 +3257,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -3072,7 +3284,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -3099,7 +3311,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -3126,7 +3338,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -3153,7 +3365,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}
@@ -3180,7 +3392,7 @@ export default function Operador() {
                                 {feliz && (
                                     <button type="button">
                                         <h2>
-                                            <Emoji symbol="😃" />
+                                            <Emoji symbol="✔️" />
                                         </h2>
                                     </button>
                                 )}

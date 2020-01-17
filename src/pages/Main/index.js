@@ -6,6 +6,7 @@ import {
     startOfMonth,
     getISOWeek,
     endOfMonth,
+    isBefore,
 } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { MdChevronLeft, MdChevronRight, MdModeEdit } from 'react-icons/md';
@@ -20,6 +21,7 @@ export default function Main() {
     const auditor = useSelector(state => state.user.profile.name);
 
     const [agenda, setAgenda] = useState([]);
+
     const [date, setDate] = useState(new Date());
 
     const dateFormatted = useMemo(() => format(date, 'MMMM', { locale: pt }), [
@@ -36,26 +38,19 @@ export default function Main() {
             const response = await api.get('agenda', {
                 params: { firstWeek, lastWeek, auditor },
             });
-            const data = response.data.map(product => ({
-                ...product,
-            }));
-
+            const data = response.data.map(product => {
+                return {
+                    late: isBefore(product.semana, actualWeek),
+                    realizado: Object.is(product.status, 'Realizado'),
+                    ...product,
+                };
+            });
             setAgenda(data);
         }
         loadAgenda();
-    }, [auditor, firstWeek, lastWeek]);
-    let late = false;
-    let realizado = false;
-    // eslint-disable-next-line array-callback-return
+    }, [actualWeek, auditor, firstWeek, lastWeek]);
 
-    agenda.forEach(auditoria => {
-        if (auditoria.semana < actualWeek && auditoria.status === 'Planejado') {
-            late = true;
-        }
-        if (auditoria.status === 'Realizado') {
-            realizado = true;
-        }
-    });
+    // eslint-disable-next-line array-callback-return
 
     function handleNextMonth() {
         setDate(addMonths(date, 1));
@@ -84,8 +79,8 @@ export default function Main() {
                 {agenda.map(auditoria => (
                     <Time
                         key={auditoria.id}
-                        atrasado={late}
-                        realizado={realizado}
+                        atrasado={auditoria.late}
+                        realizado={auditoria.realizado}
                     >
                         <strong>Semana: {auditoria.semana}</strong>
                         <p>{auditoria.setor}</p>
