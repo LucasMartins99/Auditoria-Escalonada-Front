@@ -6,6 +6,7 @@ import { Container, TableDiv } from './styles';
 import api from '~/services/api';
 import { Button, ButtonGroup, Table } from 'react-bootstrap';
 import history from '~/services/history';
+import { toast } from 'react-toastify';
 
 import * as CartActions from '~/store/modules/auditoria/actions';
 
@@ -16,28 +17,69 @@ class Auditoria extends Component {
     async componentDidMount() {
         const response = await api.get('all-questions');
         this.setState({ questions: response.data });
-        const data = response.data.map(question => ({
-            ...question,
-        }));
+        const data = response.data.map(question => {
+            return {
+                nClick: false,
+                Click: false,
+                ...question
+            }
+        })
         this.setState({ questions: data });
     }
+    
+     
     handleAddAction = id => {
         const { addToQuestionRequest } = this.props;
+        const {questions}  = this.state;
         addToQuestionRequest(id);
+        const aux = questions.filter(q => q.id === id).values();
+        let i;
+        for(let letter of aux){
+         i = letter.id -1;
+        }
+        questions[i].nClick=true;
+        questions[i].Click=true;
+      
+        const data = questions.map(q => ({
+            ...q
+        }));
+        this.setState({questions: data});
     };
+
     handleRemoveAction = id => {
         const { removeFromQuestion } = this.props;
+        const {questions}  = this.state;
         removeFromQuestion(id);
+        const aux = questions.filter(q => q.id === id).values();
+        let i;
+        for(let letter of aux){
+         i = letter.id -1;
+        }
+        questions[i].nClick=true;
+        questions[i].Click=false;
+      
+        const data = questions.map(q => ({
+            ...q
+        }));
+        this.setState({questions: data});
     };
-         render() {
 
+     handleNext(){
+        const { questions } = this.state;
+        
+        const aux = questions.findIndex(q => q.nClick === false);
+        if(aux === 0){
+          toast.error('Favor realizar todos itens');
+        }else {
+            history.push('/create-plano');
+        }     
+     }
+    
+    
+         render() {
         const { questions } = this.state;
         function handleBack() {
             history.push('/main');
-        }
-
-        function handleNext(){
-            history.push('/create-plano')
         }
 
         return (
@@ -47,9 +89,7 @@ class Auditoria extends Component {
                         <MdReply size={40} color="#000" />
                     </button>
                     <strong>Formulario Auditoria</strong>
-                    <button type="button" onClick={handleNext}>
-                        <MdDone size={40} color="#000" />
-                    </button>
+                    
                 </header>
                 <TableDiv>
                     <Table striped bordered hover variant="dark">
@@ -59,7 +99,9 @@ class Auditoria extends Component {
 
                                 <th>PERGUNTAS</th>
 
-                                <th>RESPOSTA</th>
+                                <th>ESCOLHA</th>
+
+                                <th>STATUS</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,7 +120,7 @@ class Auditoria extends Component {
                                                         question.id
                                                     )
                                                 }
-                                                variant="outline-primary"
+                                                variant="outline-success"
                                             >
                                                 OK
                                             </Button>
@@ -95,8 +137,37 @@ class Auditoria extends Component {
                                             </Button>
                                         </ButtonGroup>
                                     </td>
+                                    <td>
+                                    {!question.nClick ? (
+                                        
+                                        <h4>Escolha</h4>
+                                    ) : question.Click ? (
+                                        <Button variant="outline-danger">
+                                            Item NOK
+                                        </Button>
+                                    ) : (
+                                        <Button variant="outline-success">
+                                            Item OK
+                                        </Button>
+                                    )}
+                                   
+                                    </td>
                                 </tr>
                             ))}
+                            
+                            <tr>
+                                <th scope="row"></th>
+                                
+                                <td colSpan="2">
+                                <Button  onClick={() =>
+                                                    this.handleNext()
+                                                }>
+                        <MdDone size={40} color="#000" />
+                        ENVIAR AUDITORIA
+                        </Button>
+                        </td>
+                        
+                        </tr>
                         </tbody>
                     </Table>
                 </TableDiv>
