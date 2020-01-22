@@ -66,15 +66,14 @@ class Auditoria extends Component {
 
      handleNext(){
         const { questions } = this.state;
-        
-        const aux = questions.findIndex(q => q.nClick === false);
-        if(aux === 0){
+        const aux = questions.find(q => q.nClick === false);
+        console.log(aux);
+        if(aux !== undefined){
           toast.error('Favor realizar todos itens');
         }else {
             history.push('/create-plano');
         }     
      }
-    
     
          render() {
         const { questions } = this.state;
@@ -107,8 +106,9 @@ class Auditoria extends Component {
                         <tbody>
                             {questions.map(question => (
                                 <tr>
-                                    <td>{question.item}</td>
-                                    <td>{question.text}</td>
+                                   
+                                    <td>{question.area}</td>
+                                    <td>{question.item} - {question.text}</td>
                                     <td>
                                         <ButtonGroup
                                             className="mr-2"

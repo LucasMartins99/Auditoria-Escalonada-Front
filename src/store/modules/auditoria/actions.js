@@ -17,3 +17,19 @@ export function removeFromQuestion(id) {
         id,
     };
 }
+export function addAuditoriaRequest(auditoria_id) {
+    return {
+        type: '@auditoria/ADD_REQUEST',
+        auditoria_id,
+    };
+}
+export function addAuditoriaSuccess() {
+    return {
+        type: '@auditoria/ADD_SUCCESS',
+    };
+}
+export function addAuditoriaFailure() {
+    return {
+        type: '@auditoria/ADD_FAILURE',
+    };
+}

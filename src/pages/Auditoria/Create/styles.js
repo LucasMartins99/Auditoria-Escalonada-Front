@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const Container = styled.div`
-    max-width: 650px;
+    max-width: 940px;
     margin: 50px auto;
     display: flex;
     flex-direction: column;
@@ -28,26 +28,12 @@ export const Container = styled.div`
 export const TableDiv = styled.div`
     padding-top: 30px;
     font-size: 18.5px;
-    tr {
-        display: flex;
-    }
+
     td {
-        justify-content: space-between;
-        justify-items: center;
-        align-items: center;
-    }
-    th {
-        width: 200px;
         text-align: center;
     }
 
-    thead > tr {
-        position: relative;
-        display: block;
-    }
-    tbody {
-        display: block;
-        height: 400px;
-        overflow: auto;
+    th {
+        text-align: center;
     }
 `;

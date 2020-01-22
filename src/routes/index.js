@@ -9,6 +9,7 @@ import Main from '../pages/Main/index';
 import Operador from '../pages/Operador/index';
 import CreatePlan from '../pages/Plano/Create/index';
 import CreateAuditoria from '../pages/Auditoria/Create/index';
+import Plano from '../pages/Plano/index';
 
 export default function Routes() {
     return (
@@ -17,6 +18,7 @@ export default function Routes() {
             <Route path="/register" component={CreateUser} />
             <Route path="/main" component={Main} isPrivate />
             <Route path="/operador" component={Operador} isPrivate />
+            <Route path="/planos" component={Plano} isPrivate />
             <Route
                 path="/create-auditoria"
                 component={CreateAuditoria}

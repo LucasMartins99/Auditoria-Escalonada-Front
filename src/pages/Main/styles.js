@@ -42,13 +42,15 @@ export const Time = styled.li`
     }
     opacity: ${props => (props.realizado ? 0.6 : 1)};
     p {
-        color: #000;
+        color: ${props => (props.atrasado ? 'red' : 'black')};
         font-size: 18px;
         padding-top: 18px;
     }
     span {
         display: block;
         margin-top: 3px;
-        color: #666;
+        color: ${props => (props.atrasado ? 'red' : 'black')};
+        font-size: 23px;
+        font-weight: 700;
     }
 `;

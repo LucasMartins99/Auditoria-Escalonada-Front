@@ -5,9 +5,10 @@ export function addToPlanRequest(data, auditoria_id) {
         auditoria_id,
     };
 }
-export function addToPlanSuccess() {
+export function addToPlanSuccess(data) {
     return {
         type: '@plan/ADD_TO_PLAN_SUCCESS',
+        payload: { data },
     };
 }
 export function addToPlanFailure() {

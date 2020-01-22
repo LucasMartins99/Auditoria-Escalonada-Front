@@ -79,20 +79,32 @@ export default function Main() {
                 {agenda.map(auditoria => (
                     <Time
                         key={auditoria.id}
-                        atrasado={auditoria.late}
+                        atrasado={
+                            auditoria.status === 'Realizado'
+                                ? false
+                                : auditoria.late
+                        }
                         realizado={auditoria.realizado}
                     >
                         <strong>Semana: {auditoria.semana}</strong>
                         <p>{auditoria.setor}</p>
-                        <span>{auditoria.status}</span>
+                        <span>
+                            {auditoria.late && auditoria.status !== 'Realizado'
+                                ? 'Atrasado'
+                                : auditoria.status}
+                        </span>
                         <div>
-                            <Button
-                                variant="secondary"
-                                onClick={() => handleSetor(auditoria.id)}
-                            >
-                                Realizar
-                                <MdModeEdit size={22} color="#000" />
-                            </Button>
+                            {auditoria.status === 'Realizado' ? (
+                                <span />
+                            ) : (
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => handleSetor(auditoria.id)}
+                                >
+                                    Realizar
+                                    <MdModeEdit size={22} color="#000" />
+                                </Button>
+                            )}
                         </div>
                     </Time>
                 ))}
