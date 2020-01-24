@@ -19,10 +19,10 @@ export default function Header() {
                         <Link to="/main">
                             <li>HOME</li>
                         </Link>
-                        <Link to="/auditorias">
+                        <Link to="/auditoria">
                             <li>AUDITORIAS</li>
                         </Link>
-                        <Link to="/plano">
+                        <Link to="/planos">
                             <li>AÇÕES</li>
                         </Link>
                         <Link to="/indicadores">

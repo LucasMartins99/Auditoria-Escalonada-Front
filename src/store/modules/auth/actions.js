@@ -18,10 +18,21 @@ export function loginFailure() {
     };
 }
 
-export function createUserRequest(name, email, password, cargo) {
+export function createUserRequest(data) {
     return {
         type: '@auth/CREATE_USER_REQUEST',
-        payload: { name, email, password, cargo },
+        payload: { data },
+    };
+}
+export function createUserFailure() {
+    return {
+        type: '@auth/CREATE_USER_FAILURE',
+    };
+}
+export function addToUserSuccess(data) {
+    return {
+        type: '@auth/ADD_TO_USER_SUCCESS',
+        payload: { data },
     };
 }
 

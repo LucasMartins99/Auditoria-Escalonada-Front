@@ -2,7 +2,12 @@ import { takeLatest, call, put, all } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
 import history from '~/services/history';
 import api from '~/services/api';
-import { loginSuccess, loginFailure } from './actions';
+import {
+    loginSuccess,
+    loginFailure,
+    addToUserSuccess,
+    createUserFailure,
+} from './actions';
 
 export function* login({ payload }) {
     try {
@@ -27,7 +32,7 @@ export function* login({ payload }) {
 }
 export function* createUser({ payload }) {
     try {
-        const { name, email, password, cargo } = payload;
+        const { name, email, password, cargo } = payload.data;
 
         yield call(api.post, 'users', {
             name,
@@ -35,12 +40,13 @@ export function* createUser({ payload }) {
             password,
             cargo,
         });
-
-        history.push('/');
+        toast.success('Usuario cadastrado');
+        yield put(addToUserSuccess());
+        history.push('/main');
     } catch (err) {
         toast.error('Falha no cadastro, verifique os dados !');
 
-        yield put(loginFailure());
+        yield put(createUserFailure());
     }
 }
 

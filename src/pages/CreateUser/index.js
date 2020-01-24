@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { Form, Input, Select } from '@rocketseat/unform';
 import * as Yup from 'yup';
+import { toast } from 'react-toastify';
 import logo from '~/assets/imagens/logo.PNG';
-
+import history from '~/services/history';
+import { Content, Wrapper } from './styles';
 import { createUserRequest } from '~/store/modules/auth/actions';
 
 const options = [
@@ -15,6 +16,7 @@ const options = [
     { id: 'Coordenador Produção', title: 'Coordenador Produção' },
     { id: 'Gerente Qualidade', title: 'Gerente Qualidade' },
     { id: 'Plant Manager', title: 'Plant Manager' },
+    { id: 'Admnistrador', title: 'Admnistrador' },
 ];
 
 const schema = Yup.object().shape({
@@ -25,38 +27,42 @@ const schema = Yup.object().shape({
     password: Yup.string()
         .min(4, 'No mínimo 4 caracteres')
         .required('A senha é obrigatória'),
+    cargo: Yup.string().required('Campo obrigatorio'),
 });
 
 export default function CreateUser() {
     const dispatch = useDispatch();
 
-    function handleSubmit({ name, email, password }) {
-        dispatch(createUserRequest(name, email, password));
+    function handleSubmit(data) {
+        dispatch(createUserRequest(data));
+        toast.success('Usuario cadastrado com sucesso !');
+        history.push('/main');
     }
 
     return (
-        <>
-            <img src={logo} alt="logo" />
-            <Form schema={schema} onSubmit={handleSubmit}>
-                <Input
-                    name="name"
-                    type="text"
-                    placeholder="Seu Nome e Sobrenome"
-                />
-                <Input name="email" type="email" placeholder="Seu e-mail" />
-                <Input
-                    name="password"
-                    type="password"
-                    placeholder="Digite sua senha secreta"
-                />
-                <Select
-                    name="cargo"
-                    placeholder="Escolha seu cargo"
-                    options={options}
-                />
-                <button type="submit">Criar conta</button>
-                <Link to="/">Já tenho conta</Link>
-            </Form>
-        </>
+        <Wrapper>
+            <Content>
+                <img src={logo} alt="logo" />
+                <Form schema={schema} onSubmit={handleSubmit}>
+                    <Input
+                        name="name"
+                        type="text"
+                        placeholder="Seu Nome e Sobrenome"
+                    />
+                    <Input name="email" type="email" placeholder="Seu e-mail" />
+                    <Input
+                        name="password"
+                        type="password"
+                        placeholder="Digite sua senha secreta"
+                    />
+                    <Select
+                        name="cargo"
+                        placeholder="Escolha seu cargo"
+                        options={options}
+                    />
+                    <button type="submit">Criar conta</button>
+                </Form>
+            </Content>
+        </Wrapper>
     );
 }

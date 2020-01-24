@@ -35,5 +35,8 @@ export const TableDiv = styled.div`
 
     th {
         text-align: center;
+        position: sticky;
+        background: black;
+        top: 0;
     }
 `;

@@ -1,9 +1,10 @@
+/* eslint-disable func-names */
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import MaterialTable from 'material-table';
+import pt from 'date-fns/locale/pt';
 import Table from '@material-ui/core/Table';
-import { isBefore, getISOWeek } from 'date-fns';
+import { isBefore, getISOWeek, format } from 'date-fns';
 import Fab from '@material-ui/core/Fab';
 import CheckIcon from '@material-ui/icons/Check';
 import CreateIcon from '@material-ui/icons/Create';
@@ -45,14 +46,18 @@ const styles = theme => ({
 function Plano(props) {
     const { classes } = props;
     const [plano, setPlano] = useState([]);
+    const [plano2, setPlano2] = useState([]);
+    const [plano3, setPlano3] = useState([]);
     const actualWeek = getISOWeek(new Date());
+    const today = format(new Date(), 'yyyy-MM-dd', { locale: pt });
+
     useEffect(() => {
         async function loadPlano() {
             const response = await api.get('plan');
             const data = response.data.map(planos => {
                 return {
                     ...planos,
-                    late: isBefore(planos.prazo, actualWeek),
+                    late: isBefore(new Date(planos.prazo), new Date(today)),
                     // eslint-disable-next-line no-prototype-builtins
                     realizado: planos.conclusao === null,
                 };
@@ -61,7 +66,34 @@ function Plano(props) {
             setPlano(data);
         }
         loadPlano();
-    }, [actualWeek]);
+    }, [actualWeek, today]);
+    useEffect(() => {
+        const data = plano.map(p => {
+            return {
+                ...p,
+                status: !p.realizado
+                    ? 'Realizado'
+                    : !p.late && p.realizado
+                    ? 'Em andamento'
+                    : p.late && p.realizado
+                    ? 'Atrasado'
+                    : '',
+            };
+        });
+        setPlano2(data);
+    }, [plano]);
+    useEffect(() => {
+        const data = plano2.sort(function(a, b) {
+            if (a.status > b.status) {
+                return 1;
+            }
+            if (a.status < b.status) {
+                return -1;
+            }
+            return 0;
+        });
+        setPlano3(data);
+    }, [plano2]);
 
     function formatDate(date) {
         const dia = date.split('-')[2];
@@ -71,6 +103,7 @@ function Plano(props) {
     function hadleBack() {
         history.push('/main');
     }
+
     return (
         <Container>
             <header>
@@ -117,20 +150,22 @@ function Plano(props) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {plano.map(p => (
+                            {plano3.map(p => (
                                 <TableRow>
-                                    {p.late && p.realizado ? (
+                                    {p.status === 'Atrasado' ? (
                                         <TableCell className={classes.red}>
-                                            L
+                                            R
                                         </TableCell>
-                                    ) : !p.realizado ? (
+                                    ) : p.status === 'Em andamento' ? (
+                                        <TableCell className={classes.orange}>
+                                            Y
+                                        </TableCell>
+                                    ) : p.status === 'Realizado' ? (
                                         <TableCell className={classes.green}>
                                             G
                                         </TableCell>
                                     ) : (
-                                        <TableCell className={classes.orange}>
-                                            Y
-                                        </TableCell>
+                                        ''
                                     )}
                                     <TableCell>{p.item}</TableCell>
                                     <TableCell>{p.setor}</TableCell>

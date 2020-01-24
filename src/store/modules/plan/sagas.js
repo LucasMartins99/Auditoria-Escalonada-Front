@@ -19,7 +19,7 @@ export function* addToPlan({ payload, auditoria_id }) {
             setor,
             acao,
             responsavel,
-            conclusao,
+            prazo,
             avatar_id,
         } = payload.data;
         yield call(api.post, `plan/${auditoria_id}`, {
@@ -31,7 +31,7 @@ export function* addToPlan({ payload, auditoria_id }) {
             acao,
             responsavel,
             data,
-            conclusao,
+            prazo,
             avatar_id,
         });
     } catch (err) {

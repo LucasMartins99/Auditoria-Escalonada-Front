@@ -26,7 +26,6 @@ const options = [
     { id: 'Segurança', title: 'Segurança' },
 ];
 
-
 const schema = Yup.object().shape({
     item: Yup.number().required(),
     problema: Yup.string().required(),
@@ -46,7 +45,7 @@ export default function CreatePlan() {
     const auditoria_id = useSelector(state => state.setor.setor.id);
 
     const handleSubmit = data => {
-        data.conclusao = format(data.conclusao, 'yyy/MM/dd', { locale: pt });
+        data.prazo = format(data.prazo, 'yyy/MM/dd', { locale: pt });
         dispatch(CartActions.addToPlanRequest(data, auditoria_id));
     };
     const profile = useSelector(state => state.user.profile);
@@ -63,7 +62,7 @@ export default function CreatePlan() {
     }
 
     const initialData = {
-        conclusao: addWeeks(new Date(), 1),
+        prazo: addWeeks(new Date(), 1),
     };
 
     return (
@@ -99,7 +98,7 @@ export default function CreatePlan() {
                                     autocomplete="off"
                                 />
 
-                                <DatePicker name="conclusao" />
+                                <DatePicker name="prazo" />
 
                                 <Select
                                     name="responsavel"
