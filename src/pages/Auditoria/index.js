@@ -15,7 +15,7 @@ import {
     subMonths,
 } from 'date-fns';
 import CreateIcon from '@material-ui/icons/Create';
-import AddCircle from '@material-ui/icons/AddCircle';
+
 import { withStyles } from '@material-ui/core/styles';
 import TableBody from '@material-ui/core/TableBody';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -74,9 +74,10 @@ function Auditoria(props) {
     const [auditoria, setAuditoria] = useState([]);
     const [auditoria2, setAuditoria2] = useState([]);
     const [auditoria3, setAuditoria3] = useState([]);
-    const [auditor, setAuditor] = useState(['Todos']);
+    const [auditor, setAuditor] = useState('Todos');
     const [date, setDate] = useState(new Date());
-
+    const [cargo, setCargo] = useState('Todos');
+    const [setor, setSetor] = useState('Todos');
     const dateFormatted = useMemo(() => format(date, 'MMMM', { locale: pt }), [
         date,
     ]);
@@ -106,15 +107,29 @@ function Auditoria(props) {
     }, [actualWeek, firstWeek, lastWeek]);
 
     useEffect(() => {
-        if (auditor === 'Todos') {
-            setAuditoria2(auditoria);
-        } else {
-            const auditoriaFilter = auditoria.filter(
-                x => x.auditor === auditor
-            );
-            setAuditoria2(auditoriaFilter);
+        if (auditor !== 'Todos') {
+            const auditorFilter = auditoria.filter(x => x.auditor === auditor);
+            setAuditoria2(auditorFilter);
         }
     }, [auditor]);
+    useEffect(() => {
+        if (setor !== 'Todos') {
+            const setorFilter = auditoria.filter(x => x.setor === setor);
+            setAuditoria2(setorFilter);
+        }
+    }, [setor]);
+    useEffect(() => {
+        if (cargo !== 'Todos') {
+            const cargoFilter = auditoria.filter(x => x.cargo === cargo);
+            setAuditoria2(cargoFilter);
+        }
+    }, [cargo]);
+    useEffect(() => {
+        if (cargo === 'Todos' && setor === 'Todos' && auditor === 'Todos') {
+            setAuditoria2(auditoria);
+        }
+    }, [cargo, auditor, setor]);
+
     useEffect(() => {
         const data = auditoria2.map(a => {
             return {
@@ -134,10 +149,12 @@ function Auditoria(props) {
     function handleNextMonth() {
         setDate(addMonths(date, 1));
         setAuditor('Todos');
+        setCargo('Todos');
     }
     function handlePrevMonth() {
         setDate(subMonths(date, 1));
         setAuditor('Todos');
+        setCargo('Todos');
     }
 
     function formatDate(d) {
@@ -147,6 +164,18 @@ function Auditoria(props) {
     }
     const handleAuditor = event => {
         setAuditor(event.target.value);
+        setCargo('Todos');
+        setSetor('Todos');
+    };
+    const handleCargo = event => {
+        setCargo(event.target.value);
+        setAuditor('Todos');
+        setSetor('Todos');
+    };
+    const handleSetor = event => {
+        setSetor(event.target.value);
+        setAuditor('Todos');
+        setCargo('Todos');
     };
 
     return (
@@ -172,6 +201,76 @@ function Auditoria(props) {
                         <option value="Todos">Todos</option>
                         <option value="Fabio">Fabio</option>
                         <option value="Jose">Jose</option>
+                    </Select>
+                </FormControl>
+                <FormControl variant="outlined" className={classes.FormControl}>
+                    <FormHelperText className={classes.text}>
+                        SETOR:
+                    </FormHelperText>
+                    <Select
+                        className={classes.select}
+                        native
+                        value={setor}
+                        onChange={handleSetor}
+                    >
+                        <option value="Todos">Todos</option>
+                        <option value="Linha Tubulares">Linha Tubulares</option>
+                        <option value="Linha de Forjas">Linha de Forjas</option>
+                        <option value="Linha de Fornos">Linha de Fornos</option>
+                        <option value="Usinagem/Recalque">
+                            Usinagem/Recalque
+                        </option>
+                        <option value="Calibragem/Jatos/Cravamento de Arruelas">
+                            Calibragem/Jatos
+                        </option>
+                        <option value="Linha de Pintura">
+                            Linha de Pintura
+                        </option>
+                        <option value="Linha de Montagem">
+                            Linha de Montagem
+                        </option>
+                        <option value="Glue Bushing">Glue Bushing</option>
+                        <option value="Indução/Enroladeira L2/Forno">
+                            Indução/Enroladeira L2
+                        </option>
+                        <option value="Enroladeira Frio">
+                            Enroladeira Frio
+                        </option>
+                        <option value="Morita 1/Magna Flux/Jato/Morita 2">
+                            Morita 1/Magna Flux/Jato
+                        </option>
+                        <option value="Pintura/Morita 3/Acabamento">
+                            Pintura/Morita 3/Acabamento
+                        </option>
+                    </Select>
+                </FormControl>
+                <FormControl variant="outlined" className={classes.FormControl}>
+                    <FormHelperText className={classes.text}>
+                        CARGO:
+                    </FormHelperText>
+                    <Select
+                        className={classes.select}
+                        native
+                        value={cargo}
+                        onChange={handleCargo}
+                    >
+                        <option value="Todos">Todos</option>
+                        <option value="Plant Manager">Plant Manager</option>
+                        <option value="Gerente Qualidade">
+                            Gerente Qualidade
+                        </option>
+                        <option value="Coordenador Produção">
+                            Coordenador Produção
+                        </option>
+                        <option value="Analista da Qualidade">
+                            Analista da Qualidade
+                        </option>
+                        <option value="Supervisor Produção">
+                            Supervisor Produção
+                        </option>
+                        <option value=" Engenharia Processo">
+                            Engenharia Processo
+                        </option>
                     </Select>
                 </FormControl>
             </header>
@@ -200,9 +299,6 @@ function Auditoria(props) {
                                 </TableCell>
                                 <TableCell className={classes.head}>
                                     ALTERAR
-                                </TableCell>
-                                <TableCell className={classes.head}>
-                                    CADASTRAR
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -245,16 +341,6 @@ function Auditoria(props) {
                                         >
                                             {' '}
                                             EDITAR{' '}
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="outlined"
-                                            className={classes.extendedIcon}
-                                            startIcon={<AddCircle />}
-                                        >
-                                            {' '}
-                                            CRIAR AUDITORIA{' '}
                                         </Button>
                                     </TableCell>
                                 </TableRow>

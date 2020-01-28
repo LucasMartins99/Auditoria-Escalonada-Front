@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const Container = styled.div`
+    max-width: 1100px;
+    margin: 50px auto;
     display: flex;
     flex-direction: column;
 
@@ -24,15 +26,9 @@ export const Container = styled.div`
     }
 `;
 
-export const TableDiv = styled.div`
+export const Center = styled.ul`
+    display: flex;
+    align-self: center;
+    align-items: center;
     padding-top: 30px;
-    font-size: 18.5px;
-
-    td {
-        text-align: center;
-    }
-
-    th {
-        text-align: center;
-    }
 `;

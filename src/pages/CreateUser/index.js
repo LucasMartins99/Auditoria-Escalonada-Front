@@ -43,17 +43,25 @@ export default function CreateUser() {
         <Wrapper>
             <Content>
                 <img src={logo} alt="logo" />
-                <Form schema={schema} onSubmit={handleSubmit}>
+                <Form
+                    autoComplete="off"
+                    schema={schema}
+                    onSubmit={handleSubmit}
+                >
                     <Input
                         name="name"
                         type="text"
-                        placeholder="Seu Nome e Sobrenome"
+                        placeholder="Nome e Sobrenome"
                     />
-                    <Input name="email" type="email" placeholder="Seu e-mail" />
+                    <Input
+                        name="email"
+                        type="email"
+                        placeholder="O e-mail sogefi"
+                    />
                     <Input
                         name="password"
                         type="password"
-                        placeholder="Digite sua senha secreta"
+                        placeholder="Digite a senha secreta"
                     />
                     <Select
                         name="cargo"

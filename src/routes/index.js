@@ -11,6 +11,7 @@ import CreateAuditoria from '../pages/Auditoria/Create/index';
 import CreatePlan from '../pages/Plano/Create/index';
 import Plano from '../pages/Plano/index';
 import Auditoria from '../pages/Auditoria/index';
+import NewAuditoria from '../pages/Auditoria/New/index';
 
 export default function Routes() {
     return (
@@ -27,6 +28,12 @@ export default function Routes() {
                 isPrivate
             />
             <Route path="/create-plano" component={CreatePlan} isPrivate />
+            <Route
+                path="/new-auditoria"
+                component={NewAuditoria}
+                is
+                isPrivate
+            />
         </Switch>
     );
 }
