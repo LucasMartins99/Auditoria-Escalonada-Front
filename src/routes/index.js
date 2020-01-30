@@ -29,6 +29,12 @@ export default function Routes() {
             />
             <Route path="/create-plano" component={CreatePlan} isPrivate />
             <Route
+                path="/new-auditoria/:id"
+                component={NewAuditoria}
+                is
+                isPrivate
+            />
+            <Route
                 path="/new-auditoria"
                 component={NewAuditoria}
                 is

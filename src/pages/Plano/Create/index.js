@@ -1,30 +1,27 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Form, Input, Select } from '@rocketseat/unform';
+import PropTypes from 'prop-types';
+
+import TextField from '@material-ui/core/TextField';
 import { format, addWeeks } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import * as Yup from 'yup';
 import Tooltip from 'react-tooltip-lite';
+import { useForm } from 'react-hook-form';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker,
+} from '@material-ui/pickers';
+import { withStyles } from '@material-ui/core/styles';
+import { FormHelperText } from '@material-ui/core';
+import DateFnsUtils from '@date-io/date-fns';
 import history from '~/services/history';
-
 import { Container, Card, Center } from './styles';
-import DatePicker from '../../../components/DatePicker/index';
 import * as CartActions from '../../../store/modules/plan/actions';
 import * as AuditoriaActions from '../../../store/modules/auditoria/actions';
 import ImgInput from './ImgInput';
-
-const options = [
-    { id: 'Engenharia', title: 'Engenharia' },
-    { id: 'Ferramentaria', title: 'Ferramentaria' },
-    { id: 'Kaizen', title: 'Kaizen' },
-    { id: 'Logística', title: 'Logística' },
-    { id: 'Manutenção', title: 'Manutenção' },
-    { id: 'Produção', title: 'Produção' },
-    { id: 'Qualidade', title: 'Qualidade' },
-    { id: 'RH', title: 'RH' },
-    { id: 'Segurança', title: 'Segurança' },
-];
+import api from '~/services/api';
 
 const schema = Yup.object().shape({
     item: Yup.number().required(),
@@ -39,13 +36,23 @@ const schema = Yup.object().shape({
     file: Yup.string(),
     avatar_id: Yup.number(),
 });
+const styles = {};
 
-export default function CreatePlan() {
+function CreatePlan(props) {
+    const { classes } = props;
     const dispatch = useDispatch();
     const auditoria_id = useSelector(state => state.setor.setor.id);
+    const [users, setUsers] = useState([]);
+    const [date2, setDate2] = useState(addWeeks(new Date(), 1));
+    const { register, handleSubmit } = useForm({
+        validationSchema: schema,
+    });
 
-    const handleSubmit = data => {
+    const onSubmit = data => {
         data.prazo = format(data.prazo, 'yyy/MM/dd', { locale: pt });
+        if (data.avatar_id === undefined) {
+            data.avatar_id = 1;
+        }
         dispatch(CartActions.addToPlanRequest(data, auditoria_id));
     };
     const profile = useSelector(state => state.user.profile);
@@ -60,10 +67,20 @@ export default function CreatePlan() {
         dispatch(AuditoriaActions.addAuditoriaRequest(auditoria_id));
         history.push('/main');
     }
+    function handleDate(date2) {
+        setDate2(date2);
+    }
 
-    const initialData = {
-        prazo: addWeeks(new Date(), 1),
-    };
+    useEffect(() => {
+        async function loadUsers() {
+            const response = await api.get('/users');
+            const data = response.data.map(a => ({
+                ...a,
+            }));
+            setUsers(data);
+        }
+        loadUsers();
+    });
 
     return (
         <Container>
@@ -73,47 +90,83 @@ export default function CreatePlan() {
             <Center>
                 {auditoria.map(question => (
                     <Card key={question.item}>
-                        <Form
-                            id="planForm"
-                            onSubmit={handleSubmit}
-                            initialData={initialData}
-                            schema={schema}
-                            key={question.id}
+                        <form
+                            autoComplete="off"
+                            onSubmit={handleSubmit(onSubmit)}
                         >
                             <content>
                                 <Tooltip content={question.text}>
-                                    <Input name="item" value={question.item} />
+                                    <TextField
+                                        name="item"
+                                        value={question.item}
+                                        variant="outlined"
+                                    />
                                 </Tooltip>
-                                <Input
+                                <br />
+                                <TextField
                                     name="problema"
                                     placeholder="Descreva o problema"
                                     autocomplete="off"
+                                    variant="outlined"
                                 />
-                                <Input name="auditor" value={profile.name} />
-                                <Input name="setor" value={setor.setor} />
-                                <Input name="maquina" placeholder="maquina" />
-                                <Input
+                                <br />
+                                <TextField
+                                    name="auditor"
+                                    value={profile.name}
+                                    variant="outlined"
+                                />
+
+                                <TextField
+                                    variant="outlined"
+                                    name="setor"
+                                    value={setor.setor}
+                                />
+                                <br />
+                                <TextField
+                                    variant="outlined"
+                                    name="maquina"
+                                    placeholder="maquina"
+                                />
+
+                                <TextField
                                     name="acao"
                                     placeholder="Ação corretiva se souber"
                                     autocomplete="off"
+                                    variant="outlined"
                                 />
+                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                    <FormHelperText className={classes.text} />
 
-                                <DatePicker name="prazo" />
-
-                                <Select
-                                    name="responsavel"
-                                    placeholder="Escolha o resposavel"
-                                    options={options}
-                                />
-
+                                    <KeyboardDatePicker
+                                        className={classes.data}
+                                        disableToolbar
+                                        variant="outlined"
+                                        format="dd-MM-yyyy"
+                                        label="DATA LIMITE"
+                                        id="date-picker-inline"
+                                        inputRef={register}
+                                        name="date"
+                                        value={date2}
+                                        onChange={handleDate}
+                                        KeyboardButtonProps={{
+                                            'arial-label': 'change date',
+                                        }}
+                                    />
+                                </MuiPickersUtilsProvider>
                                 <ImgInput name="avatar_id" />
                             </content>
 
                             <button type="submit">Enviar</button>
-                        </Form>
+                        </form>
                     </Card>
                 ))}
             </Center>
         </Container>
     );
 }
+CreatePlan.propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
+    classes: PropTypes.object.isRequired,
+    id: PropTypes.number,
+};
+export default withStyles(styles)(CreatePlan);

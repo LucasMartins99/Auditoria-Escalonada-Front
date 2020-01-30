@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-/* eslint-disable import/no-unresolved */
+/* eslint-disable no-return-assign */
 import React, { useState, useEffect } from 'react';
 import Card from '@material-ui/core/Card';
 import PropTypes from 'prop-types';
@@ -10,7 +10,9 @@ import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 import { FormControl, FormHelperText } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
-import { getISOWeek } from 'date-fns';
+import { getISOWeek, getYear } from 'date-fns';
+import { useForm } from 'react-hook-form';
+
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
@@ -49,18 +51,23 @@ const styles = theme => ({
         paddingTop: 47,
         paddingLeft: 230,
     },
+    option: {
+        minWidth: 230,
+    },
 });
 
 function Form(props) {
     const { classes } = props;
-    const [setor, setSetor] = useState('');
+    const { id } = props;
+
     const [date2, setDate2] = useState(new Date());
-    const [obs, setObs] = useState('');
-    const [auditor, setAuditor] = useState('');
-    const [status, setStatus] = useState('Planejado');
+
+    const [status] = useState('Planejado');
     const [users, setUsers] = useState([]);
-    const [turno, setTurno] = useState('adm');
-    const [cargo, setCargo] = useState('');
+    const [turno] = useState('adm');
+
+    const [auditoria, setAuditoria] = useState([]);
+    const { register, handleSubmit } = useForm();
 
     useEffect(() => {
         async function loadUsers() {
@@ -73,49 +80,86 @@ function Form(props) {
         loadUsers();
     }, []);
 
-    const handleSetor = event => {
-        setSetor(event.target.value);
-    };
-    const handleAuditor = event => {
-        setAuditor(event.target.value);
-        const aux = users.filter(u => u.name === event.target.value);
-        aux.map(a => setCargo(a.cargo));
-    };
-
-    const handleDate = date2 => {
+    function handleDate(date2) {
         setDate2(date2);
-    };
-    async function handleSubmit() {
-        const semana = getISOWeek(date2);
-        try {
-            const response = await api.post('auditoria', {
-                setor,
-                semana,
-                status,
-                auditor,
-                obs,
-                turno,
-                cargo,
-            });
-        } catch (err) {
-            toast.error('Falha na atribuição da auditoria');
-        }
-        toast.success('Auditoria atribuida com sucesso');
     }
+    async function onSubmit(data) {
+        const semana = getISOWeek(date2);
+        const ano = getYear(date2);
+        const { auditor, setor, obs } = data;
+        const aux = users.filter(u => u.name === data.auditor).slice(0, 1);
+        let cargo;
+        aux.map(a => (cargo = a.cargo));
+
+        if (id !== undefined) {
+            try {
+                const response = await api.put(`auditoria/${id}`, {
+                    setor,
+                    semana,
+                    auditor,
+                    obs,
+                    cargo,
+                    ano,
+                });
+                toast.success('Auditoria alterada com sucesso');
+            } catch (err) {
+                toast.error('Falha na alteração da auditoria');
+            }
+        } else {
+            try {
+                const response = await api.post('auditoria', {
+                    setor,
+                    semana,
+                    status,
+                    auditor,
+                    cargo,
+                    obs,
+                    turno,
+                    ano,
+                });
+                toast.success('Auditoria atribuida com sucesso');
+            } catch (err) {
+                toast.error('Falha na atribuição da auditoria');
+            }
+        }
+    }
+    useEffect(() => {
+        async function loadAuditoria() {
+            const response = await api.get('/auditoria');
+            const data = response.data.map(a => ({
+                ...a,
+            }));
+            setAuditoria(data);
+        }
+        loadAuditoria();
+    }, []);
+
+    const auditoriaId = auditoria.filter(a => a.id === parseInt(id, 10));
 
     return (
         <Card className={classes.card} variant="outlined">
             <form
                 autoComplete="off"
                 className={classes.root}
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
             >
                 <FormControl variant="outlined" className={classes.FormControl}>
                     <FormHelperText className={classes.text}>
                         SETOR:
                     </FormHelperText>
-                    <Select native value={setor} onChange={handleSetor}>
-                        <option value="ESCOLHA">Escolha</option>
+                    <Select native inputRef={register} name="setor">
+                        {id !== undefined ? (
+                            auditoriaId.map(a => (
+                                <option selected value={a.setor}>
+                                    {a.setor}
+                                </option>
+                            ))
+                        ) : (
+                            <option selected value="ESCOLHA">
+                                Escolha
+                            </option>
+                        )}
+
                         <option value="Linha Tubulares">Linha Tubulares</option>
                         <option value="Linha de Forjas">Linha de Forjas</option>
                         <option value="Linha de Fornos">Linha de Fornos</option>
@@ -151,8 +195,18 @@ function Form(props) {
                     <FormHelperText className={classes.text}>
                         AUDITOR:
                     </FormHelperText>
-                    <Select native value={auditor} onChange={handleAuditor}>
-                        <option value="ESCOLHA">Escolha</option>
+                    <Select inputRef={register} name="auditor" native>
+                        {id !== undefined ? (
+                            auditoriaId.map(a => (
+                                <option selected value={a.auditor}>
+                                    {a.auditor}
+                                </option>
+                            ))
+                        ) : (
+                            <option selected value="ESCOLHA">
+                                Escolha
+                            </option>
+                        )}
                         {users.map(u => (
                             <option key={u.name} value={u.name}>
                                 {u.name}
@@ -160,9 +214,9 @@ function Form(props) {
                         ))}
                     </Select>
                 </FormControl>
-
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <FormHelperText className={classes.text} />
+
                     <KeyboardDatePicker
                         className={classes.data}
                         disableToolbar
@@ -170,6 +224,8 @@ function Form(props) {
                         format="dd-MM-yyyy"
                         label="DATA LIMITE"
                         id="date-picker-inline"
+                        inputRef={register}
+                        name="date"
                         value={date2}
                         onChange={handleDate}
                         KeyboardButtonProps={{
@@ -177,16 +233,32 @@ function Form(props) {
                         }}
                     />
                 </MuiPickersUtilsProvider>
+
                 <span className={classes.span} />
-                <TextField
-                    id="outline-multiline-static"
-                    label="OBSERVAÇÃO"
-                    multiline
-                    row="10"
-                    variant="outlined"
-                    value={obs}
-                    onInput={e => setObs(e.target.value)}
-                />
+                {id !== undefined ? (
+                    auditoriaId.map(a => (
+                        <TextField
+                            id="outline-multiline-static"
+                            label="OBSERVAÇÃO"
+                            multiline
+                            row="10"
+                            inputRef={register}
+                            name="obs"
+                            variant="outlined"
+                        />
+                    ))
+                ) : (
+                    <TextField
+                        id="outline-multiline-static"
+                        label="OBSERVAÇÃO"
+                        multiline
+                        row="10"
+                        variant="outlined"
+                        name="obs"
+                        inputRef={register}
+                    />
+                )}
+
                 <div className={classes.button2}>
                     <Button
                         variant="outlined"
@@ -194,7 +266,7 @@ function Form(props) {
                         size="large"
                         type="submit"
                     >
-                        Cadastrar
+                        {id !== undefined ? 'ALTERAR' : 'CADASTRAR'}
                     </Button>
                 </div>
             </form>
@@ -204,5 +276,9 @@ function Form(props) {
 Form.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     classes: PropTypes.object.isRequired,
+    id: PropTypes.number,
+};
+Form.defaultProps = {
+    id: undefined,
 };
 export default withStyles(styles)(Form);

@@ -9,6 +9,7 @@ import history from '~/services/history';
 export function* addToPlan({ payload, auditoria_id }) {
     const status = 'Realizado';
     const dataAtual = new Date();
+
     const data = format(dataAtual, 'yyyy/MM/dd', { locale: pt });
     try {
         const {

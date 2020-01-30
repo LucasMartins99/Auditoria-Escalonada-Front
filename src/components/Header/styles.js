@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import media from 'styled-media-query';
 
 // eslint-disable-next-line import/prefer-default-export
 export const Container = styled.header`
@@ -7,8 +8,15 @@ export const Container = styled.header`
     display: flex;
     justify-content: center;
     align-items: center;
+    ${media.lessThan('medium')`
+    min-width: 900px;
+    `}
 `;
 export const Content = styled.div`
+    ${media.lessThan('medium')`
+    max-width: 1100px;
+    `}
+
     height: 64px;
     max-width: 900px;
     margin: 0 auto;

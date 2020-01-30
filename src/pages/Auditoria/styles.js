@@ -1,10 +1,13 @@
 import styled from 'styled-components';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import media from 'styled-media-query';
 
 export const Container = styled.div`
     display: flex;
     flex-direction: column;
-
+    ${media.lessThan('medium')`
+    width: 180%;
+    `}
     header {
         display: flex;
         align-self: center;
@@ -17,8 +20,8 @@ export const Container = styled.div`
 
         strong {
             color: #000;
-            font-size: 35px;
-            margin: 0 30px;
+            font-size: 30px;
+            margin: 0 10px;
             border: 3px;
         }
     }

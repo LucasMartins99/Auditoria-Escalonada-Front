@@ -13,6 +13,8 @@ import {
     endOfMonth,
     addMonths,
     subMonths,
+    addYears,
+    subYears,
 } from 'date-fns';
 import CreateIcon from '@material-ui/icons/Create';
 
@@ -27,6 +29,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import { FormControl, FormHelperText } from '@material-ui/core';
 import api from '~/services/api';
+import history from '~/services/history';
 import { Container, TableDiv } from './styles';
 
 const styles = theme => ({
@@ -60,7 +63,6 @@ const styles = theme => ({
     },
     formControl: {
         margin: theme.spacing(1),
-        minWidth: 120,
     },
     text: {
         marginLeft: 85,
@@ -76,11 +78,16 @@ function Auditoria(props) {
     const [auditoria3, setAuditoria3] = useState([]);
     const [auditor, setAuditor] = useState('Todos');
     const [date, setDate] = useState(new Date());
+    const [date2, setDate2] = useState(new Date());
     const [cargo, setCargo] = useState('Todos');
     const [setor, setSetor] = useState('Todos');
     const dateFormatted = useMemo(() => format(date, 'MMMM', { locale: pt }), [
         date,
     ]);
+    const dateFormatted2 = useMemo(
+        () => format(date2, 'yyyy', { locale: pt }),
+        [date2]
+    );
     const actualWeek = getISOWeek(new Date());
     const firstDay = startOfMonth(date);
     const lastDay = endOfMonth(date);
@@ -90,7 +97,7 @@ function Auditoria(props) {
     useEffect(() => {
         async function loadAuditoria() {
             const response = await api.get('auditoria-mes', {
-                params: { firstWeek, lastWeek },
+                params: { firstWeek, lastWeek, date2 },
             });
             const data = response.data.map(a => {
                 return {
@@ -104,7 +111,7 @@ function Auditoria(props) {
             setAuditoria2(data);
         }
         loadAuditoria();
-    }, [actualWeek, firstWeek, lastWeek]);
+    }, [actualWeek, firstWeek, lastWeek, date2]);
 
     useEffect(() => {
         if (auditor !== 'Todos') {
@@ -141,6 +148,12 @@ function Auditoria(props) {
                     : !a.late && !a.realizado
                     ? 'Planejado'
                     : '',
+                disabled:
+                    a.cargo === 'Engenharia Processo'
+                        ? true
+                        : a.cargo === 'Analista Qualidade'
+                        ? true
+                        : a.cargo === 'Supervisor Produção',
             };
         });
         setAuditoria3(data);
@@ -153,6 +166,16 @@ function Auditoria(props) {
     }
     function handlePrevMonth() {
         setDate(subMonths(date, 1));
+        setAuditor('Todos');
+        setCargo('Todos');
+    }
+    function handleNextYear() {
+        setDate2(addYears(date2, 1));
+        setAuditor('Todos');
+        setCargo('Todos');
+    }
+    function handlePrevYear() {
+        setDate2(subYears(date2, 1));
         setAuditor('Todos');
         setCargo('Todos');
     }
@@ -186,6 +209,13 @@ function Auditoria(props) {
                 </button>
                 <strong>{dateFormatted}</strong>
                 <button type="button" onClick={handleNextMonth}>
+                    <MdChevronRight size={36} color="#000" />
+                </button>
+                <button type="button" onClick={handlePrevYear}>
+                    <MdChevronLeft size={36} color="#000" />
+                </button>
+                <strong>{dateFormatted2}</strong>
+                <button type="button" onClick={handleNextYear}>
                     <MdChevronRight size={36} color="#000" />
                 </button>
                 <FormControl variant="outlined" className={classes.FormControl}>
@@ -336,8 +366,14 @@ function Auditoria(props) {
                                         <Button
                                             variant="outlined"
                                             color="primary"
+                                            disabled={a.disabled}
                                             className={classes.extendedIcon}
                                             startIcon={<CreateIcon />}
+                                            onClick={() =>
+                                                history.push(
+                                                    `new-auditoria/${a.id}`
+                                                )
+                                            }
                                         >
                                             {' '}
                                             EDITAR{' '}
