@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
 import { format, addWeeks } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import * as Yup from 'yup';
@@ -20,7 +21,6 @@ import history from '~/services/history';
 import { Container, Card, Center } from './styles';
 import * as CartActions from '../../../store/modules/plan/actions';
 import * as AuditoriaActions from '../../../store/modules/auditoria/actions';
-import ImgInput from './ImgInput';
 import api from '~/services/api';
 
 const schema = Yup.object().shape({
@@ -36,24 +36,44 @@ const schema = Yup.object().shape({
     file: Yup.string(),
     avatar_id: Yup.number(),
 });
-const styles = {};
+const styles = {
+    option: {
+        minWidth: 210,
+    },
+};
 
 function CreatePlan(props) {
     const { classes } = props;
     const dispatch = useDispatch();
     const auditoria_id = useSelector(state => state.setor.setor.id);
     const [users, setUsers] = useState([]);
+    const [users2, setUsers2] = useState([]);
+    const [img, setImg] = useState();
+
+    const [aux] = useState([
+        'Engenharia',
+        'Logistica',
+        'Qualidade',
+        'Linha Barras',
+        'Linha Molas',
+        'Kaizen',
+    ]);
+
     const [date2, setDate2] = useState(addWeeks(new Date(), 1));
     const { register, handleSubmit } = useForm({
         validationSchema: schema,
     });
 
     const onSubmit = data => {
-        data.prazo = format(data.prazo, 'yyy/MM/dd', { locale: pt });
-        if (data.avatar_id === undefined) {
-            data.avatar_id = 1;
+        const prazo = format(date2, 'yyy/MM/dd', { locale: pt });
+        let avatar_id = img;
+        if (avatar_id === undefined) {
+            avatar_id = 1;
         }
-        dispatch(CartActions.addToPlanRequest(data, auditoria_id));
+
+        dispatch(
+            CartActions.addToPlanRequest(data, auditoria_id, prazo, avatar_id)
+        );
     };
     const profile = useSelector(state => state.user.profile);
     const setor = useSelector(state => state.setor.setor);
@@ -67,8 +87,20 @@ function CreatePlan(props) {
         dispatch(AuditoriaActions.addAuditoriaRequest(auditoria_id));
         history.push('/main');
     }
-    function handleDate(date2) {
-        setDate2(date2);
+    function handleDate(b) {
+        setDate2(b);
+    }
+    function handleArea(a) {
+        a.preventDefault();
+        const usersArea = users.filter(u => u.area === a.target.value);
+        setUsers2(usersArea);
+    }
+    async function handleChange(e) {
+        const data = new FormData();
+        data.append('file', e.target.files[0]);
+        const response = await api.post('files', data);
+        const { id } = response.data;
+        setImg(id);
     }
 
     useEffect(() => {
@@ -80,8 +112,7 @@ function CreatePlan(props) {
             setUsers(data);
         }
         loadUsers();
-    });
-
+    }, []);
     return (
         <Container>
             <header>
@@ -100,40 +131,82 @@ function CreatePlan(props) {
                                         name="item"
                                         value={question.item}
                                         variant="outlined"
+                                        inputRef={register}
                                     />
                                 </Tooltip>
-                                <br />
+
                                 <TextField
                                     name="problema"
                                     placeholder="Descreva o problema"
-                                    autocomplete="off"
+                                    autoComplete="off"
                                     variant="outlined"
+                                    inputRef={register}
                                 />
-                                <br />
+
                                 <TextField
                                     name="auditor"
                                     value={profile.name}
                                     variant="outlined"
+                                    inputRef={register}
                                 />
 
                                 <TextField
                                     variant="outlined"
                                     name="setor"
                                     value={setor.setor}
+                                    inputRef={register}
                                 />
-                                <br />
+
                                 <TextField
                                     variant="outlined"
                                     name="maquina"
                                     placeholder="maquina"
+                                    inputRef={register}
                                 />
 
                                 <TextField
                                     name="acao"
                                     placeholder="Ação corretiva se souber"
-                                    autocomplete="off"
+                                    autoComplete="off"
                                     variant="outlined"
+                                    inputRef={register}
                                 />
+                                <Select
+                                    native
+                                    inputRef={register}
+                                    name="area"
+                                    variant="outlined"
+                                    className={classes.option}
+                                    onChange={handleArea}
+                                >
+                                    <option disabled value="Não definido">
+                                        Area responsavel
+                                    </option>
+                                    {aux.map(a => (
+                                        <option key={a} value={a}>
+                                            {a}
+                                        </option>
+                                    ))}
+                                </Select>
+                                <Select
+                                    native
+                                    inputRef={register}
+                                    name="responsavel"
+                                    variant="outlined"
+                                    className={classes.option}
+                                >
+                                    <option disabled value="Não definido">
+                                        Escolha o responsavel
+                                    </option>
+                                    <option value="Não definido">
+                                        Não definido
+                                    </option>
+                                    {users2.map(u => (
+                                        <option key={u.name} value={u.name}>
+                                            {u.name}
+                                        </option>
+                                    ))}
+                                </Select>
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                     <FormHelperText className={classes.text} />
 
@@ -153,7 +226,15 @@ function CreatePlan(props) {
                                         }}
                                     />
                                 </MuiPickersUtilsProvider>
-                                <ImgInput name="avatar_id" />
+                                <input
+                                    type="file"
+                                    id="avatar"
+                                    className="avatar"
+                                    accept="image/*"
+                                    inputRef={register}
+                                    onChange={handleChange}
+                                    name="avatar id"
+                                />
                             </content>
 
                             <button type="submit">Enviar</button>
@@ -167,6 +248,5 @@ function CreatePlan(props) {
 CreatePlan.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     classes: PropTypes.object.isRequired,
-    id: PropTypes.number,
 };
 export default withStyles(styles)(CreatePlan);

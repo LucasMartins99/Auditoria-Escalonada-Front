@@ -18,6 +18,7 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import api from '~/services/api';
+import history from '~/services/history';
 
 const styles = theme => ({
     root: {
@@ -93,7 +94,7 @@ function Form(props) {
 
         if (id !== undefined) {
             try {
-                const response = await api.put(`auditoria/${id}`, {
+                await api.put(`auditoria/${id}`, {
                     setor,
                     semana,
                     auditor,
@@ -102,12 +103,13 @@ function Form(props) {
                     ano,
                 });
                 toast.success('Auditoria alterada com sucesso');
+                history.push('/main');
             } catch (err) {
                 toast.error('Falha na alteração da auditoria');
             }
         } else {
             try {
-                const response = await api.post('auditoria', {
+                await api.post('auditoria', {
                     setor,
                     semana,
                     status,
@@ -118,6 +120,7 @@ function Form(props) {
                     ano,
                 });
                 toast.success('Auditoria atribuida com sucesso');
+                history.push('/main');
             } catch (err) {
                 toast.error('Falha na atribuição da auditoria');
             }
@@ -236,7 +239,7 @@ function Form(props) {
 
                 <span className={classes.span} />
                 {id !== undefined ? (
-                    auditoriaId.map(a => (
+                    auditoriaId.map(() => (
                         <TextField
                             id="outline-multiline-static"
                             label="OBSERVAÇÃO"

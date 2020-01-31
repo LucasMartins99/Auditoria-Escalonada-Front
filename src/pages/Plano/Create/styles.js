@@ -32,18 +32,34 @@ export const Center = styled.div`
 `;
 export const Card = styled.div`
     background: #fff;
-    border-radius: 4px;
-    max-width: 250px;
+    max-width: 233px;
+    border-radius: 5px;
 
     form {
         display: flex;
         flex-direction: column;
-        background: #fff;
-        border-radius: 4px;
+        background: #d8d8d8;
+        border-radius: 5px;
         padding: 10px;
     }
+    .avatar {
+        display: inline-block;
+        background: linear-gradient(top, #f9f9f9, #e3e3e3);
+        border: 1px solid #999;
+        border-radius: 3px;
+        padding: 5px 8px;
+        outline: none;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        cursor: pointer;
+        text-shadow: 1px 1px #fff;
+        font-weight: 700;
+        font-size: 10pt;
+        max-width: 220px;
+        margin-right: 30px;
+    }
     span {
-        color: red;
+        color: black;
         margin: 0 0 10px;
         align-self: flex-start;
         font-weight: bold;

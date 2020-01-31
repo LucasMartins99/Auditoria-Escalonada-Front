@@ -15,7 +15,9 @@ const options = [
     { id: 'Operador', title: 'Operador' },
     { id: 'Coordenador Produção', title: 'Coordenador Produção' },
     { id: 'Gerente Qualidade', title: 'Gerente Qualidade' },
+    { id: 'Gerente Engenharia', title: 'Gerente Engenharia' },
     { id: 'Plant Manager', title: 'Plant Manager' },
+    { id: 'Engenharia', title: 'Engenharia' },
     { id: 'Admnistrador', title: 'Admnistrador' },
 ];
 

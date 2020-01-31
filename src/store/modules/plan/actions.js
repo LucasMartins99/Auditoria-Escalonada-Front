@@ -1,8 +1,10 @@
-export function addToPlanRequest(data, auditoria_id) {
+export function addToPlanRequest(data, auditoria_id, prazo, avatar_id) {
     return {
         type: '@plan/ADD_TO_PLAN_REQUEST',
         payload: { data },
         auditoria_id,
+        prazo,
+        avatar_id,
     };
 }
 export function addToPlanSuccess(data) {

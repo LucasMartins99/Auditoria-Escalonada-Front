@@ -6,7 +6,7 @@ import { addToPlanFailure, addToPlanSuccess } from './actions';
 import api from '~/services/api';
 import history from '~/services/history';
 
-export function* addToPlan({ payload, auditoria_id }) {
+export function* addToPlan({ payload, auditoria_id, prazo, avatar_id }) {
     const status = 'Realizado';
     const dataAtual = new Date();
 
@@ -20,8 +20,7 @@ export function* addToPlan({ payload, auditoria_id }) {
             setor,
             acao,
             responsavel,
-            prazo,
-            avatar_id,
+            area,
         } = payload.data;
         yield call(api.post, `plan/${auditoria_id}`, {
             item,
@@ -34,6 +33,7 @@ export function* addToPlan({ payload, auditoria_id }) {
             data,
             prazo,
             avatar_id,
+            area,
         });
     } catch (err) {
         toast.error('Falha no cadastro da ação !!');
