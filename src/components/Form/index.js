@@ -120,7 +120,6 @@ function Form(props) {
                     ano,
                 });
                 toast.success('Auditoria atribuida com sucesso');
-                history.push('/main');
             } catch (err) {
                 toast.error('Falha na atribuição da auditoria');
             }

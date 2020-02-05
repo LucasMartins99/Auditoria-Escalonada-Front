@@ -64,17 +64,16 @@ function CreatePlan(props) {
         validationSchema: schema,
     });
 
-    const onSubmit = data => {
+    async function onSubmit(data) {
         const prazo = format(date2, 'yyy/MM/dd', { locale: pt });
         let avatar_id = img;
         if (avatar_id === undefined) {
             avatar_id = 1;
         }
-
         dispatch(
             CartActions.addToPlanRequest(data, auditoria_id, prazo, avatar_id)
         );
-    };
+    }
     const profile = useSelector(state => state.user.profile);
     const setor = useSelector(state => state.setor.setor);
 

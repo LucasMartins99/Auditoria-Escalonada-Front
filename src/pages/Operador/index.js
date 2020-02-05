@@ -2,7 +2,7 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+
 import {
     format,
     getISOWeek,
@@ -22,17 +22,29 @@ import { useSelector } from 'react-redux';
 import api from '~/services/api';
 import { Container, TableDiv } from './styles';
 import OperadorAuditoria from '../../components/Links/OperadorAuditoria';
-import  Acoes from '../../components/Links/ações';
+import SuperiorAuditoria from '../../components/Links/SuperiorAuditoria';
 
 export default function Operador() {
     const [date, setDate] = useState(new Date());
     const [auditorias, setAuditoria] = useState([]);
+    const [auditoriasGestao, setAuditoriaGestao] = useState([]);
     const [plano, setPlano] = useState([]);
+    const [setor, setSetor] = useState([]);
 
-    const setor = useSelector(state => state.user.profile.setor);
+    const s = useSelector(state => {
+        return state.user.profile.area;
+    });
+    const cargo = useSelector(state => state.user.profile.cargo);
+    useEffect(()=> {
+        if(cargo !== 'Operador'){
+            setSetor('Linha Tubulares','Linha de Forjas');
+        }else {
+            setSetor(s);
+        }
+    },[])
+    
 
     const actualWeek = getISOWeek(date);
-
     const firstDay = startOfWeek(date);
     const lastDay = endOfWeek(date);
     const daysWeek = eachDayOfInterval(
@@ -52,7 +64,6 @@ export default function Operador() {
     const sextaBD = format(daysWeek[5], 'yyyy-MM-dd', { locale: pt });
     const sabado = format(daysWeek[6], 'dd-MM-yyyy', { locale: pt });
     const sabadoBD = format(daysWeek[6], 'yyyy-MM-dd', { locale: pt });
-
     useEffect(() => {
         async function loadAuditoria() {
             const response = await api.get('auditorias-semana', {
@@ -83,7 +94,21 @@ export default function Operador() {
             setAuditoria(data);
         }
         loadAuditoria();
-    }, [actualWeek]);
+    }, [actualWeek, setor]);
+
+    useEffect(() => {
+     async function loadAuditoriaGestao(){
+            const response = await api.get('auditoria-gestao', {
+                params: {setor}
+            });
+            const data = response.data.map(a => ({
+                ...a,
+            }));
+            setAuditoriaGestao(data);
+        }
+        loadAuditoriaGestao();
+    }, [setor]);
+    
 
     useEffect(() => {
         async function loadPlano() {
@@ -96,15 +121,13 @@ export default function Operador() {
         }
         loadPlano();
     }, [actualWeek]);
-
+    
     function handleNextWeek() {
         setDate(addWeeks(date, 1));
     }
     function handlePrevWeek() {
         setDate(subWeeks(date, 1));
     }
-    
-
     const todaySegunda = isSameDay(new Date(), daysWeek[1]);
     const lateSegunda = isBefore(new Date(), daysWeek[1]);
     const lateTerça = isBefore(new Date(), daysWeek[2]);
@@ -118,6 +141,8 @@ export default function Operador() {
     const todaySexta = isSameDay(new Date(), daysWeek[5]);
     const todaySabado = isSameDay(new Date(), daysWeek[6]);
 
+    const PlantManeger = auditoriasGestao.filter(a => a.cargo === 'Plant Manager');
+    
     const auditoriasT1 = auditorias.filter(x => x.turno === '1');
     const auditoriasT1Segunda = auditoriasT1.filter(x => x.data === segundaBD);
     const auditoriasT1Terça = auditoriasT1.filter(x => x.data === terçaBD);
@@ -143,58 +168,75 @@ export default function Operador() {
     const auditoriasT3Sabado = auditoriasT3.filter(x => x.data === sabadoBD);
 
     const planoT1 = plano.filter(a => a.auditoria.turno === '1');
-    const planoT1Area1 = planoT1.filter(a => a.area === 1).slice(0,1);
-    const planoT1Area2 = planoT1.filter(a => a.area === 2).slice(0,1);
-    const planoT1Area3 = planoT1.filter(a => a.area === 3).slice(0,1);
-    const planoT1Area4 = planoT1.filter(a => a.area === 4).slice(0,1);
-    const planoT1Area5 = planoT1.filter(a => a.area === 5).slice(0,1);
-    const planoT1Area6 = planoT1.filter(a => a.area === 6).slice(0,1);
-    const planoT1Area7 = planoT1.filter(a => a.area === 7).slice(0,1);
-    const planoT1Area8 = planoT1.filter(a => a.area === 8).slice(0,1);
-    const planoT1Area9 = planoT1.filter(a => a.area === 9).slice(0,1);
-    const planoT1Area10 = planoT1.filter(a => a.area === 10).slice(0,1);
-    const planoT1Area11= planoT1.filter(a => a.area === 11).slice(0,1);
-    const planoT1Area12 = planoT1.filter(a => a.area === 12).slice(0,1);
+    const planoT1Area1 = planoT1.filter(a => a.subitem === 1).slice(0,1);
+    const planoT1Area2 = planoT1.filter(a => a.subitem === 2).slice(0,1);
+    const planoT1Area3 = planoT1.filter(a => a.subitem === 3).slice(0,1);
+    const planoT1Area4 = planoT1.filter(a => a.subitem === 4).slice(0,1);
+    const planoT1Area5 = planoT1.filter(a => a.subitem === 5).slice(0,1);
+    const planoT1Area6 = planoT1.filter(a => a.subitem === 6).slice(0,1);
+    const planoT1Area7 = planoT1.filter(a => a.subitem === 7).slice(0,1);
+    const planoT1Area8 = planoT1.filter(a => a.subitem === 8).slice(0,1);
+    const planoT1Area9 = planoT1.filter(a => a.subitem === 9).slice(0,1);
+    const planoT1Area10 = planoT1.filter(a => a.subitem === 10).slice(0,1);
+    const planoT1Area11 = planoT1.filter(a => a.subitem === 11).slice(0, 1);
+    const planoT1Area12 = planoT1.filter(a => a.subitem === 12).slice(0,1);
 
     const planoT2 = plano.filter(b => b.auditoria.turno === '2');
-    const planoT2Area1 = planoT1.filter(a => a.area === 1).slice(0,1);
-    const planoT2Area2 = planoT1.filter(a => a.area === 2).slice(0,1);
-    const planoT2Area3 = planoT1.filter(a => a.area === 3).slice(0,1);
-    const planoT2Area4 = planoT1.filter(a => a.area === 4).slice(0,1);
-    const planoT2Area5 = planoT1.filter(a => a.area === 5).slice(0,1);
-    const planoT2Area6 = planoT1.filter(a => a.area === 6).slice(0,1);
-    const planoT2Area7 = planoT1.filter(a => a.area === 7).slice(0,1);
-    const planoT2Area8 = planoT1.filter(a => a.area === 8).slice(0,1);
-    const planoT2Area9 = planoT1.filter(a => a.area === 9).slice(0,1);
-    const planoT2Area10 = planoT1.filter(a => a.area === 10).slice(0,1);
-    const planoT2Area11= planoT1.filter(a => a.area === 11).slice(0,1);
-    const planoT2Area12 = planoT1.filter(a => a.area === 12).slice(0,1);
+    const planoT2Area1 = planoT2.filter(a => a.subitem === 1).slice(0,1);
+    const planoT2Area2 = planoT2.filter(a => a.subitem === 2).slice(0,1);
+    const planoT2Area3 = planoT2.filter(a => a.subitem === 3).slice(0,1);
+    const planoT2Area4 = planoT2.filter(a => a.subitem === 4).slice(0,1);
+    const planoT2Area5 = planoT2.filter(a => a.subitem === 5).slice(0,1);
+    const planoT2Area6 = planoT2.filter(a => a.subitem === 6).slice(0,1);
+    const planoT2Area7 = planoT2.filter(a => a.subitem === 7).slice(0,1);
+    const planoT2Area8 = planoT2.filter(a => a.subitem === 8).slice(0,1);
+    const planoT2Area9 = planoT2.filter(a => a.subitem === 9).slice(0,1);
+    const planoT2Area10 = planoT2.filter(a => a.subitem === 10).slice(0,1);
+    const planoT2Area11 = planoT2.filter(a => a.subitem === 11).slice(0,1);
+    const planoT2Area12 = planoT2.filter(a => a.subitem === 12).slice(0,1);
 
     const planoT3 = plano.filter(c => c.auditoria.turno === '3');
-    const planoT3Area1 = planoT1.filter(a => a.area === 1).slice(0,1);
-    const planoT3Area2 = planoT1.filter(a => a.area === 2).slice(0,1);
-    const planoT3Area3 = planoT1.filter(a => a.area === 3).slice(0,1);
-    const planoT3Area4 = planoT1.filter(a => a.area === 4).slice(0,1);
-    const planoT3Area5 = planoT1.filter(a => a.area === 5).slice(0,1);
-    const planoT3Area6 = planoT1.filter(a => a.area === 6).slice(0,1);
-    const planoT3Area7 = planoT1.filter(a => a.area === 7).slice(0,1);
-    const planoT3Area8 = planoT1.filter(a => a.area === 8).slice(0,1);
-    const planoT3Area9 = planoT1.filter(a => a.area === 9).slice(0,1);
-    const planoT3Area10 = planoT1.filter(a => a.area === 10).slice(0,1);
-    const planoT3Area11 = planoT1.filter(a => a.area === 11).slice(0,1);
-    const planoT3Area12 = planoT1.filter(a => a.area === 12).slice(0,1);
+    const planoT3Area1 = planoT3.filter(a => a.subitem === 1).slice(0,1);
+    const planoT3Area2 = planoT3.filter(a => a.subitem === 2).slice(0,1);
+    const planoT3Area3 = planoT3.filter(a => a.subitem === 3).slice(0,1);
+    const planoT3Area4 = planoT3.filter(a => a.subitem === 4).slice(0,1);
+    const planoT3Area5 = planoT3.filter(a => a.subitem === 5).slice(0,1);
+    const planoT3Area6 = planoT3.filter(a => a.subitem === 6).slice(0,1);
+    const planoT3Area7 = planoT3.filter(a => a.subitem === 7).slice(0,1);
+    const planoT3Area8 = planoT3.filter(a => a.subitem === 8).slice(0,1);
+    const planoT3Area9 = planoT3.filter(a => a.subitem === 9).slice(0,1);
+    const planoT3Area10 = planoT3.filter(a => a.subitem === 10).slice(0,1);
+    const planoT3Area11 = planoT3.filter(a => a.subitem === 11).slice(0,1);
+    const planoT3Area12 = planoT3.filter(a => a.subitem === 12).slice(0,1);
 
     return (
         <Container>
             <header>
                 <div className="legenda">
-                    <p>OK = ✔️</p>
-                    <p>PLANEJADO = ✏️ </p>
-                    <p>ATRASADO = ➖ </p>
-                    <p>PROBLEMA = ❌ </p>
+                    <p>OK = 
+                        <h7>
+                            <Emoji symbol="✔️" />
+                        </h7>
+                    </p>
+                    <p>PLANEJADO =
+                        <h7>
+                            {' '}
+                            <Emoji symbol="✏️" />
+                        </h7>
+                    </p>
+                    <p>ATRASADO = 
+                        <h7>
+                            <Emoji symbol = "➖" />
+                            </h7>
+                            </p>
+                        
+                    <p>PROBLEMA =
+                        <h7>
+                            <Emoji symbol = "❌" />
+                            </h7>
+                          </p>
                 </div>
-
-                <div>
+                  <div>
                     <button type="button" onClick={handlePrevWeek}>
                         <MdChevronLeft size={55} color="#000" />
                     </button>
@@ -221,7 +263,6 @@ export default function Operador() {
                             <th colSpan="3">Quinta: {quinta}</th>
                             <th colSpan="3">Sexta: {sexta}</th>
                             <th colSpan="3">Sábado: {sabado}</th>
-                            <th colSpan="3">Domingo</th>
                             <th>Analista Qualidade</th>
                             <th>Engenharia Processo</th>
                             <th>Supervisão Produção</th>
@@ -251,9 +292,6 @@ export default function Operador() {
                             <td>T 1</td>
                             <td>T 2</td>
                             <td>T 3</td>
-                            <td>T 1</td>
-                            <td>T 2</td>
-                            <td>T 3</td>
                             <td>Semanal</td>
                             <td>Semanal</td>
                             <td>Semanal</td>
@@ -264,804 +302,168 @@ export default function Operador() {
                         <tr>
                             <td>Documentação e registros operacionais</td>
                             <td>
-                                    {todaySegunda ? (
-                                    <OperadorAuditoria dia={segunda} tipo="false"  />
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area1.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 1 &&           
-                                                        p.conclusao === null ? (
-                                                            <Acoes dia={segunda} />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                       <OperadorAuditoria dia={segunda} tipo="true" />
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-                                        <h2>
-                                         <OperadorAuditoria dia={segunda} tipo="false" />
-                                   </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area1.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 1 && p.conclusao === null ? (
-                                                            <Acoes dia={segunda} />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                          <OperadorAuditoria dia={segunda} tipo="true" />
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                               
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area1.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 1 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                           late={lateSegunda}
+                           dia={segunda}
+                           today={todaySegunda} 
+                           auditoria={auditoriasT2Segunda} 
+                           plano={planoT2Area1}  
+                           subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area1.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area1.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-                                    <h2>
-                                    <OperadorAuditoria dia={terça} tipo="false" />
-                                    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area1.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area1.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area1.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area1.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-                                    <h2>
-                                    <OperadorAuditoria dia={quinta} tipo="false" />
-                                    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area1.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area1.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area1.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area1.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area1.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area1.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area1.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                    
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area1.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area1}  
+                        subItem = "1" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area1.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area1}  
+                        subItem = "1" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area1.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area1.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area1.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area1.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 1 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                                dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area1}
+                                    subItem="1"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -1089,818 +491,174 @@ export default function Operador() {
                                     </button>
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
+                              
                             </td>
                         </tr>
                         <tr>
                             <td>Meios de Controle</td>
-
                             <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area2.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 2 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area2.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 2 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-                                    <h2>
-                                    <OperadorAuditoria dia={segunda} tipo="false" />
-                                    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area2.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 2 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area2.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area2.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area2.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area2}  
+                        subItem = "2" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area2.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area2.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area2.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area2.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area2.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area2.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area2.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area2.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area2.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area2.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                    
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area2.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area2}  
+                        subItem = "2" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area2.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                    
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area2.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area2.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area2.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area2.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 2 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area2}
+                                    subItem="2"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -1931,815 +689,575 @@ export default function Operador() {
                                     <button type="button">
                                         <h2>Plant Manager</h2>
                                     </button>
+                           </td>                        </tr>
+                        <tr>
+                            <td>POKA YOKE</td>
+
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area3}  
+                        subItem = "3" />
                             </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area3}  
+                        subItem = "3" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area3}  
+                        subItem = "3" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area3}  
+                        subItem = "3" />
+                            </td>
+                           
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area3}  
+                        subItem = "3" />
+                            </td>
+                           
+                            <td>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area3}
+                                    subItem="3"
+                                />
+                            </td>
+                             <td>
+                                    <button type="button">
+                                        <h2>Analista Qualidade</h2>
+                                    </button>
+                             </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Engenharia</h2>
+                                    </button>
+                            </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Supervisao P.</h2>
+                                    </button>
+                            </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Cordenação P.</h2>
+                                    </button>
+                            </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Gerente Qualidade</h2>
+                                    </button>
+                            </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Plant Manager</h2>
+                                    </button>
+                           </td>                        
+                           </tr>
+                        <tr>
+                            <td>Treinamento</td>
+
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area4}  
+                        subItem = "4" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area4}  
+                        subItem = "4" />
+                            </td>
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area4}  
+                        subItem = "4" />
+                            </td>
+                           
+                            <td>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area4}  
+                        subItem = "4" />
+                            </td>
+                           
+                            <td>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area4}
+                                    subItem="4"
+                                />
+                            </td>
+                             <td>
+                                    <button type="button">
+                                        <h2>Analista Qualidade</h2>
+                                    </button>
+                             </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Engenharia</h2>
+                                    </button>
+                            </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Supervisao P.</h2>
+                                    </button>
+                            </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Cordenação P.</h2>
+                                    </button>
+                            </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Gerente Qualidade</h2>
+                                    </button>
+                            </td>
+                            <td>
+                                    <button type="button">
+                                        <h2>Plant Manager</h2>
+                                    </button>
+                           </td>
                         </tr>
                         <tr>
-                            <td>Documentação e registros operacionais</td>
+                            <td>Gestão de não conformes</td>
 
                             <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area3.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 3 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area3.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 3 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area3.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 3 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area3.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area3.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area3.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area5}  
+                        subItem = "5" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area3.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area3.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area3.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area3.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area3.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area3.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area3.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area3.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area3.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area5}  
+                        subItem = "5" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                 
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area3.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area5}  
+                        subItem = "5" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area3.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area5}  
+                        subItem = "5" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area3.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area3.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area3.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area3.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area3.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 3 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area5}
+                                    subItem="5"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -2770,815 +1288,175 @@ export default function Operador() {
                                     <button type="button">
                                         <h2>Plant Manager</h2>
                                     </button>
-                            </td>
+                           </td>
                         </tr>
                         <tr>
-                            <td>Documentação e registros operacionais</td>
-
+                            <td>Alertas da qualidade</td>
                             <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area4.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 4 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area4.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 4 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area4.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 4 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area4.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area4.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area4.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area6}  
+                        subItem = "6" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area4.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area4.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area4.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area4.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area4.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area4.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area4.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area4.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area4.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area6}  
+                        subItem = "6" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area4.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area6}  
+                        subItem = "6" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area4.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area6}  
+                        subItem = "6" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area4.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area4.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area4.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area4.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area4.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 4 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area6}
+                                    subItem="6"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -3609,815 +1487,176 @@ export default function Operador() {
                                     <button type="button">
                                         <h2>Plant Manager</h2>
                                     </button>
-                            </td>
+                           </td>
                         </tr>
                         <tr>
-                            <td>Documentação e registros operacionais</td>
+                            <td>Identificação e rastreabilidade</td>
 
                             <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area5.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 5 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area5.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 5 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area5.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 5 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area5.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area5.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area5.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area7}  
+                        subItem = "7" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area5.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area5.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area5.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area5.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area5.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area5.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area5.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area5.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area5.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area7}  
+                        subItem = "7" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area5.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area7}  
+                        subItem = "7" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area5.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area7}  
+                        subItem = "7" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area5.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area5.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area5.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area5.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area5.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 5 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area7}
+                                    subItem="7"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -4448,815 +1687,176 @@ export default function Operador() {
                                     <button type="button">
                                         <h2>Plant Manager</h2>
                                     </button>
-                            </td>
+                           </td>
                         </tr>
                         <tr>
-                            <td>Documentação e registros operacionais</td>
+                            <td>5S</td>
 
                             <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area6.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 6 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area6.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 6 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area6.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 6 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area6.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area6.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area6.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area8}  
+                        subItem = "8" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area6.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area6.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area6.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area6.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area6.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area6.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area6.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area6.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area6.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area8}  
+                        subItem = "8" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area6.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area8}  
+                        subItem = "8" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area6.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area8}  
+                        subItem = "8" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area6.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area6.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area6.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area6.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area6.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 6 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area8}
+                                    subItem="8"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -5287,815 +1887,176 @@ export default function Operador() {
                                     <button type="button">
                                         <h2>Plant Manager</h2>
                                     </button>
-                            </td>
+                           </td>
                         </tr>
                         <tr>
-                            <td>Documentação e registros operacionais</td>
+                            <td>Segurança / Meio ambiente</td>
 
                             <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area7.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 7 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area7.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 7 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area7.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 7 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area7.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area7.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area7.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area9}  
+                        subItem = "9" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area7.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area7.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area7.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area7.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area7.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area7.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area7.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area7.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area7.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area9}  
+                        subItem = "9" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area7.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area9}  
+                        subItem = "9" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area7.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area9}  
+                        subItem = "9" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area7.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area7.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area7.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area7.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area7.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 7 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area9}
+                                    subItem="9"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -6126,815 +2087,176 @@ export default function Operador() {
                                     <button type="button">
                                         <h2>Plant Manager</h2>
                                     </button>
-                            </td>
+                           </td>
                         </tr>
                         <tr>
-                            <td>Documentação e registros operacionais</td>
+                            <td>TPM</td>
 
                             <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area8.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 8 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area8.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 8 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area8.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 8 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area8.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area8.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area8.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area10}  
+                        subItem = "10" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area8.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area8.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area8.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area8.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area8.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area8.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area8.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area8.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area8.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area10}  
+                        subItem = "10" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area8.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area10}  
+                        subItem = "10" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area8.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area10}  
+                        subItem = "10" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area8.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area8.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area8.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area8.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area8.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 8 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area10}
+                                    subItem="10"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -6965,815 +2287,176 @@ export default function Operador() {
                                     <button type="button">
                                         <h2>Plant Manager</h2>
                                     </button>
-                            </td>
+                           </td>
                         </tr>
                         <tr>
-                            <td>Documentação e registros operacionais</td>
+                            <td>Disciplina</td>
 
                             <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area9.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 9 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area9.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 9 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area9.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 9 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area9.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area9.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area9.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area11}  
+                        subItem = "11" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area9.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area9.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area9.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area9.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area9.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area9.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area9.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area9.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area9.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area11}  
+                        subItem = "11" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area9.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area11}  
+                        subItem = "11" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area9.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area11}  
+                        subItem = "11" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                 
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area9.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area9.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area9.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area9.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area9.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 9 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area11}
+                                    subItem="11"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -7804,815 +2487,176 @@ export default function Operador() {
                                     <button type="button">
                                         <h2>Plant Manager</h2>
                                     </button>
-                            </td>
+                           </td>
                         </tr>
                         <tr>
-                            <td>Documentação e registros operacionais</td>
+                            <td>1ª Peça OK</td>
 
                             <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area10.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 10 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area10.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 10 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT1Segunda} 
+                        plano={planoT1Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area10.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 10 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT2Segunda} 
+                        plano={planoT2Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area10.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSegunda}
+                        dia={segunda}
+                        today={todaySegunda} 
+                        auditoria={auditoriasT3Segunda} 
+                        plano={planoT3Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area10.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT1Terça} 
+                        plano={planoT1Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area10.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT2Terça} 
+                        plano={planoT2Area12}  
+                        subItem = "12" />
+                            </td>
+      
+                            <td>
+                        <OperadorAuditoria
+                        late={lateTerça}
+                        dia={terça}
+                        today={todayTerça} 
+                        auditoria={auditoriasT3Terça} 
+                        plano={planoT3Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area10.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT1Quarta} 
+                        plano={planoT1Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area10.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT2Quarta} 
+                        plano={planoT2Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area10.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuarta}
+                        dia={quarta}
+                        today={todayQuarta} 
+                        auditoria={auditoriasT3Quarta} 
+                        plano={planoT3Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area10.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                            <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT1Quinta} 
+                        plano={planoT1Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area10.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT2Quinta} 
+                        plano={planoT2Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area10.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateQuinta}
+                        dia={quinta}
+                        today={todayQuinta} 
+                        auditoria={auditoriasT3Quinta} 
+                        plano={planoT3Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area10.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT1Sexta} 
+                        plano={planoT1Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area10.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT2Sexta} 
+                        plano={planoT2Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area10.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSexta}
+                        dia={sexta}
+                        today={todaySexta} 
+                        auditoria={auditoriasT3Sexta} 
+                        plano={planoT3Area12}  
+                        subItem = "12" />
                             </td>
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area10.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT1Sabado} 
+                        plano={planoT1Area12}  
+                        subItem = "12" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area10.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                        late={lateSabado}
+                        dia={sabado}
+                        today={todaySabado} 
+                        auditoria={auditoriasT2Sabado} 
+                        plano={planoT2Area12}  
+                        subItem = "12" />
                             </td>
+                           
                             <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area10.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area10.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area10.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area10.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area10.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 10 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
+                        <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado} 
+                                    auditoria={auditoriasT3Sabado} 
+                                    plano={planoT3Area12}
+                                    subItem="12"
+                                />
                             </td>
                              <td>
                                     <button type="button">
@@ -8643,1684 +2687,7 @@ export default function Operador() {
                                     <button type="button">
                                         <h2>Plant Manager</h2>
                                     </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Documentação e registros operacionais</td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area11.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 11 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area11.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 11 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area11.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 11 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area11.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area11.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area11.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area11.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area11.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area11.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area11.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area11.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area11.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area11.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area11.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area11.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area11.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area11.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area11.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area11.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area11.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                 
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area11.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area11.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 11 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
-                             </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                            </td>
-                        </tr><tr>
-                            <td>Documentação e registros operacionais</td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Segunda.length > 0 ? (
-                                        auditoriasT1Segunda.map(a1 =>
-                                            planoT1Area12.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 12 &&           
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                            {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Segunda.length > 0 ? (
-                                        auditoriasT2Segunda.map(a1 =>
-                                            planoT2Area12.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 12 && p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todaySegunda ? (
-    <h2>
-      <OperadorAuditoria dia={segunda} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Segunda.length > 0 ? (
-                                        auditoriasT3Segunda.map(a1 =>
-                                            planoT3Area12.length < 1 &&
-                                            a1.OkSegunda ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSegunda &&
-                                                        p.area === 12 &&
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSegunda && !todaySegunda ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                              {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Terça.length > 0 ? (
-                                        auditoriasT1Terça.map(a1 =>
-                                            planoT1Area12.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Terça.length > 0 ? (
-                                        auditoriasT2Terça.map(a1 =>
-                                            planoT2Area12.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ?  (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todayTerça ? (
-    <h2>
-      <OperadorAuditoria dia={terça} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Terça.length > 0 ? (
-                                        auditoriasT3Terça.map(a1 =>
-                                            planoT3Area12.length < 1 &&
-                                            a1.OkTerça ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkTerça &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateTerça && !todayTerça ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quarta.length > 0 ? (
-                                        auditoriasT1Quarta.map(a1 =>
-                                            planoT1Area12.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quarta.length > 0 ? (
-                                        auditoriasT2Quarta.map(a1 =>
-                                            planoT2Area12.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todayQuarta ? (
-    <h2>
-      <OperadorAuditoria dia={quarta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quarta.length > 0 ? (
-                                        auditoriasT3Quarta.map(a1 =>
-                                            planoT3Area12.length < 1 &&
-                                            a1.OkQuarta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuarta &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuarta && !todayQuarta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Quinta.length > 0 ? (
-                                        auditoriasT1Quinta.map(a1 =>
-                                            planoT1Area12.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Quinta.length > 0 ? (
-                                        auditoriasT2Quinta.map(a1 =>
-                                            planoT2Area12.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                    {todayQuinta ? (
-    <h2>
-      <OperadorAuditoria dia={quinta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Quinta.length > 0 ? (
-                                        auditoriasT3Quinta.map(a1 =>
-                                            planoT3Area12.length < 1 &&
-                                            a1.OkQuinta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkQuinta &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateQuinta && !todayQuinta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT1Sexta.length > 0 ? (
-                                        auditoriasT1Sexta.map(a1 =>
-                                            planoT1Area12.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                  {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT2Sexta.length > 0 ? (
-                                        auditoriasT2Sexta.map(a1 =>
-                                            planoT2Area12.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySexta ? (
-    <h2>
-      <OperadorAuditoria dia={sexta} tipo="false" />
-    </h2>
-                                    ) : auditoriasT3Sexta.length > 0 ? (
-                                        auditoriasT3Sexta.map(a1 =>
-                                            planoT3Area12.length < 1 &&
-                                            a1.OkSexta ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSexta &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSexta && !todaySexta ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area12.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area12.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                  
-                                    ) : auditoriasT3Sabado.length > 0 ? (
-                                        auditoriasT3Sabado.map(a1 =>
-                                            planoT3Area12.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT3Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT1Sabado.length > 0 ? (
-                                        auditoriasT1Sabado.map(a1 =>
-                                            planoT1Area12.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT1Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                         
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area12.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button">
-                                   {todaySabado ? (
-    <h2>
-      <OperadorAuditoria dia={sabado} tipo="false" />
-    </h2>
-                                   
-                                    ) : auditoriasT2Sabado.length > 0 ? (
-                                        auditoriasT2Sabado.map(a1 =>
-                                            planoT2Area12.length < 1 &&
-                                            a1.OkSabado ? (
-                                                <h2>
-                                                    {' '}
-                                                    <Emoji symbol="✔️" />{' '}
-                                                </h2>
-                                            ) : (
-                                                planoT2Area12.map(p => (
-                                                    <h2>
-                                                        {a1.OkSabado &&
-                                                        p.area === 12 && 
-                                                        p.conclusao === null ? (
-                                                            <Emoji symbol="🙁" />
-                                                        ) : (
-                                                            <Emoji symbol="✔️" />
-                                                        )}
-                                                    </h2>
-                                                ))
-                                            )
-                                        )
-                                    ) : !lateSabado && !todaySabado ? (
-                                        <h2>
-                                            {' '}
-                                            <Emoji symbol="➖ " />{' '}
-                                        </h2>
-                                    ) : (
-                                        <Emoji symbol="" />
-                                    )}
-                                </button>
-                            </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
-                             </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                            </td>
+                           </td>
                         </tr>
                     </tbody>
                 </Table>
