@@ -4,7 +4,8 @@ import user from './user/sagas';
 import auditoria from './auditoria/sagas';
 import setor from './setor/sagas';
 import plan from './plan/sagas';
+import operador from './operador/sagas';
 
 export default function* rootSaga() {
-    return yield all([auth, user, auditoria, setor, plan]);
+    return yield all([auth, user, auditoria, setor, plan, operador]);
 }

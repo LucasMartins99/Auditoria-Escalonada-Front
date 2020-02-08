@@ -42,4 +42,8 @@ export const TableDiv = styled.div`
     th {
         text-align: center;
     }
+    .a {
+        padding-top: 60px;
+        font-size: 20px;
+    }
 `;

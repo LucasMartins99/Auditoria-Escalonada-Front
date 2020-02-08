@@ -6,14 +6,23 @@ import { addToPlanFailure, addToPlanSuccess } from './actions';
 import api from '~/services/api';
 import history from '~/services/history';
 
-export function* addToPlan({ payload, auditoria_id, prazo, avatar_id }) {
+export function* addToPlan({
+    payload,
+    dataOp,
+    auditoria_id,
+    prazo,
+    avatar_id,
+    cargo,
+}) {
     const status = 'Realizado';
     const dataAtual = new Date();
+    let data = format(dataAtual, 'yyyy/MM/dd', { locale: pt });
+    if (cargo === 'Operador') {
+        data = dataOp;
+    }
 
-    const data = format(dataAtual, 'yyyy/MM/dd', { locale: pt });
     try {
         const {
-            item,
             problema,
             auditor,
             maquina,
@@ -21,7 +30,10 @@ export function* addToPlan({ payload, auditoria_id, prazo, avatar_id }) {
             acao,
             responsavel,
             area,
+            item,
+            subitem,
         } = payload.data;
+
         yield call(api.post, `plan/${auditoria_id}`, {
             item,
             problema,
@@ -34,17 +46,26 @@ export function* addToPlan({ payload, auditoria_id, prazo, avatar_id }) {
             prazo,
             avatar_id,
             area,
+            subitem,
         });
     } catch (err) {
         toast.error('Falha no cadastro da ação !!');
         yield put(addToPlanFailure);
     }
-    yield call(api.put, `/auditoria/${auditoria_id}`, {
-        status,
-        data,
-    });
-    toast.success('Ação cadastrada com sucesso');
-    history.push('/main');
+    if (cargo === 'Operador') {
+        yield call(api.put, `/auditoria/${auditoria_id}`, {
+            status,
+        });
+        toast.success('Ação cadastrada com sucesso');
+        history.push('/main');
+    } else {
+        yield call(api.put, `/auditoria/${auditoria_id}`, {
+            status,
+            data,
+        });
+        toast.success('Ação cadastrada com sucesso');
+        history.push('/main');
+    }
     yield put(addToPlanSuccess(payload.data));
 }
 export default all([takeLatest('@plan/ADD_TO_PLAN_REQUEST', addToPlan)]);

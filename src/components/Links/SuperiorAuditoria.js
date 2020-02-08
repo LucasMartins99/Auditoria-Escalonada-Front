@@ -1,38 +1,63 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import Emoji from 'a11y-react-emoji';
+import { Link } from 'react-router-dom';
+import { Container } from './styles';
 
 export default function SuperiorAuditoria(props) {
     const [id, setId] = useState();
-    const { plano, aux, subitem } = props;
+    const [auditor, setAuditor] = useState();
+    const [data, setData] = useState(null);
+    const { plano, aux, subItem } = props;
+    const subitemformat = parseInt(subItem, 0);
+
     useEffect(() => {
-        aux.map(plant => setId(plant.id));
-    });
-    const validar = plano.find(p => p.auditoria.id === id);
+        if (aux.length < 1) {
+            setId(null);
+            setAuditor(null);
+            setData(null);
+        } else {
+            aux.map(plant => setId(plant.id));
+            aux.map(plant => setAuditor(plant.auditor));
+            aux.map(plant => setData(plant.data));
+        }
+    }, [aux]);
+
+    const validar = plano.filter(p => p.auditoria.id === id);
+
+    function formatDate(date) {
+        const dia = date.split('-')[2];
+        const mes = date.split('-')[1];
+        return `${dia}-${mes}`;
+    }
 
     return (
-        <button type="button">
-            {validar === undefined ? (
-                <h2>
-                    {' '}
-                    <Emoji symbol="✔️" />{' '}
-                </h2>
-            ) : (
-                validar.map(a =>
-                    a.subitem === subitem ? (
-                        <h2>
-                            {' '}
-                            <Emoji symbol="❌" />{' '}
-                        </h2>
-                    ) : (
-                        <h2>
-                            {' '}
-                            <Emoji symbol="✔️" />{' '}
-                        </h2>
+        <Container>
+            <button type="button">
+                {id !== null && validar.length < 1 ? (
+                    <h1>
+                        <Emoji symbol="✔️" /> <p /> <p>{auditor}</p>
+                        <p>{data !== null ? formatDate(data) : 'a'}</p>
+                    </h1>
+                ) : (
+                    validar.map(a =>
+                        a.subitem === subitemformat ? (
+                            <h2>
+                                <Link to="/planos">
+                                    <Emoji symbol="❌" />
+                                    <p /> <p>{auditor}</p>
+                                    <p>{formatDate(data)}</p>
+                                </Link>
+                            </h2>
+                        ) : (
+                            <h1>
+                                <Emoji symbol="✔️" /> <p /> <p>{auditor}</p>
+                                <p>{formatDate(data)}</p>
+                            </h1>
+                        )
                     )
-                )
-            )}
-        </button>
+                )}
+            </button>
+        </Container>
     );
 }

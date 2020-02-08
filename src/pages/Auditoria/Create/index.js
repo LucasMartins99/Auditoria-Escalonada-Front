@@ -7,14 +7,21 @@ import api from '~/services/api';
 import { Button, ButtonGroup, Table } from 'react-bootstrap';
 import history from '~/services/history';
 import { toast } from 'react-toastify';
-
 import * as CartActions from '~/store/modules/auditoria/actions';
+import ModalForm from '~/components/Modal/index';
 
 class Auditoria extends Component {
     state = {
         questions: [],
+        data2: '',
+        semana: '',
+        turno: '',
     };
     async componentDidMount() {
+        const {match: {params}} = this.props;
+        this.setState({data2: params.id});
+        this.setState({semana: params.semana});
+        this.setState({turno: params.turno});
         const response = await api.get('all-questions');
         this.setState({ questions: response.data });
         const data = response.data.map(question => {
@@ -31,6 +38,7 @@ class Auditoria extends Component {
     handleAddAction = id => {
         const { addToQuestionRequest } = this.props;
         const {questions}  = this.state;
+        const {data2} = this.state;
         addToQuestionRequest(id);
         const aux = questions.filter(q => q.id === id).values();
         let i;
@@ -66,17 +74,25 @@ class Auditoria extends Component {
 
      handleNext(){
         const { questions } = this.state;
+        const {data2} = this.state;
         const aux = questions.find(q => q.nClick === false);
-        console.log(aux);
+        
         if(aux !== undefined){
           toast.error('Favor realizar todos itens');
         }else {
-            history.push('/create-plano');
+            if(data2 !== undefined){
+            history.push(`/create-plano-operador/${data2}`);
+        }else{
+            history.push('/create-plano/');
+        }
         }     
      }
     
          render() {
         const { questions } = this.state;
+        const {data2} = this.state;
+        const {semana} = this.state;
+        const {turno} = this.state;
         function handleBack() {
             history.push('/main');
         }
@@ -88,8 +104,8 @@ class Auditoria extends Component {
                         <MdReply size={40} color="#000" />
                     </button>
                     <strong>Formulario Auditoria</strong>
-                    
                 </header>
+                {data2 !== undefined && <ModalForm data={data2} semana={semana} turno={turno} /> }
                 <TableDiv>
                     <Table striped bordered hover variant="dark">
                         <thead>

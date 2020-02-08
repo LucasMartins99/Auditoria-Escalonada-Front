@@ -1,3 +1,5 @@
+/* eslint-disable react/destructuring-assignment */
+
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,6 +16,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
+import Box from '@material-ui/core/Box';
 import { withStyles } from '@material-ui/core/styles';
 import { FormHelperText } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
@@ -40,15 +43,23 @@ const styles = {
     option: {
         minWidth: 210,
     },
+    teste: {
+        display: 'none',
+    },
 };
 
 function CreatePlan(props) {
+    const { dataop } = props.match.params;
     const { classes } = props;
     const dispatch = useDispatch();
+    const profile = useSelector(state => state.user.profile);
+    const setor = useSelector(state => state.setor.setor);
+    const cargo = useSelector(state => state.user.profile.cargo);
     const auditoria_id = useSelector(state => state.setor.setor.id);
     const [users, setUsers] = useState([]);
     const [users2, setUsers2] = useState([]);
     const [img, setImg] = useState();
+    const [subitem, setSubitem] = useState();
 
     const [aux] = useState([
         'Engenharia',
@@ -71,11 +82,16 @@ function CreatePlan(props) {
             avatar_id = 1;
         }
         dispatch(
-            CartActions.addToPlanRequest(data, auditoria_id, prazo, avatar_id)
+            CartActions.addToPlanRequest(
+                data,
+                dataop,
+                auditoria_id,
+                prazo,
+                avatar_id,
+                cargo
+            )
         );
     }
-    const profile = useSelector(state => state.user.profile);
-    const setor = useSelector(state => state.setor.setor);
 
     const auditoria = useSelector(state =>
         state.auditoria.map(question => ({
@@ -83,7 +99,7 @@ function CreatePlan(props) {
         }))
     );
     if (auditoria.length === 0) {
-        dispatch(AuditoriaActions.addAuditoriaRequest(auditoria_id));
+        dispatch(AuditoriaActions.addAuditoriaRequest(auditoria_id, cargo));
         history.push('/main');
     }
     function handleDate(b) {
@@ -126,6 +142,15 @@ function CreatePlan(props) {
                         >
                             <content>
                                 <Tooltip content={question.text}>
+                                    <Box component="span" display="none">
+                                        <TextField
+                                            display="none"
+                                            name="subitem"
+                                            value={question.subitem}
+                                            variant="outlined"
+                                            inputRef={register}
+                                        />
+                                    </Box>
                                     <TextField
                                         name="item"
                                         value={question.item}

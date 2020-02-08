@@ -19,6 +19,7 @@ import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import { Table } from 'react-bootstrap';
 import Emoji from 'a11y-react-emoji';
 import { useSelector } from 'react-redux';
+import { FormControl, FormHelperText, Select } from '@material-ui/core';
 import api from '~/services/api';
 import { Container, TableDiv } from './styles';
 import OperadorAuditoria from '../../components/Links/OperadorAuditoria';
@@ -30,20 +31,37 @@ export default function Operador() {
     const [auditoriasGestao, setAuditoriaGestao] = useState([]);
     const [plano, setPlano] = useState([]);
     const [setor, setSetor] = useState([]);
+    const [arrSetor, setArrSetor] = useState([]);
+    const [auxSetor, setAuxSetor] = useState(false);
 
     const s = useSelector(state => {
         return state.user.profile.area;
     });
     const cargo = useSelector(state => state.user.profile.cargo);
-    useEffect(()=> {
-        if(cargo !== 'Operador'){
-            setSetor('Linha Tubulares','Linha de Forjas');
-        }else {
-            setSetor(s);
-        }
-    },[])
     
 
+    useEffect(() => {
+        async function loadSetores() {
+            const response = await api.get('/all-setores');
+            const data = response.data.map(st => ({
+               ...st,
+           }));
+           setArrSetor(data);
+       }
+       loadSetores();
+    }, [])
+    
+    useEffect(() => {
+        if (cargo !== 'Operador') {
+            setAuxSetor(true);
+            setSetor('Linha de Fornos')
+        } else {
+               setAuxSetor(false);
+               setSetor(s);
+           }
+    }, [])
+    
+   
     const actualWeek = getISOWeek(date);
     const firstDay = startOfWeek(date);
     const lastDay = endOfWeek(date);
@@ -97,9 +115,9 @@ export default function Operador() {
     }, [actualWeek, setor]);
 
     useEffect(() => {
-     async function loadAuditoriaGestao(){
+        async function loadAuditoriaGestao() {
             const response = await api.get('auditoria-gestao', {
-                params: {setor}
+                params: { setor },
             });
             const data = response.data.map(a => ({
                 ...a,
@@ -108,7 +126,6 @@ export default function Operador() {
         }
         loadAuditoriaGestao();
     }, [setor]);
-    
 
     useEffect(() => {
         async function loadPlano() {
@@ -121,7 +138,7 @@ export default function Operador() {
         }
         loadPlano();
     }, [actualWeek]);
-    
+
     function handleNextWeek() {
         setDate(addWeeks(date, 1));
     }
@@ -142,6 +159,11 @@ export default function Operador() {
     const todaySabado = isSameDay(new Date(), daysWeek[6]);
 
     const PlantManeger = auditoriasGestao.filter(a => a.cargo === 'Plant Manager');
+    const AnalistaQualidade = auditoriasGestao.filter(a => a.cargo === 'Analista Qualidade');
+    const EngenhariaProcesso = auditoriasGestao.filter(a => a.cargo === 'Engenharia Processo');
+    const SupervisaoProducao = auditoriasGestao.filter(a => a.cargo === 'Supervisão Produção');
+    const CoordenacaoProducao = auditoriasGestao.filter(a => a.cargo === 'Coordenação Produção');
+    const GerenteQualidade = auditoriasGestao.filter(a => a.cargo === 'Gerente Qualidade');
     
     const auditoriasT1 = auditorias.filter(x => x.turno === '1');
     const auditoriasT1Segunda = auditoriasT1.filter(x => x.data === segundaBD);
@@ -208,31 +230,37 @@ export default function Operador() {
     const planoT3Area10 = planoT3.filter(a => a.subitem === 10).slice(0,1);
     const planoT3Area11 = planoT3.filter(a => a.subitem === 11).slice(0,1);
     const planoT3Area12 = planoT3.filter(a => a.subitem === 12).slice(0,1);
-
+    const handleSetor = event => {
+        setSetor(event.target.value);
+    }
     return (
         <Container>
             <header>
                 <div className="legenda">
-                    <p>OK = 
+                    <p>
+                        OK =
                         <h7>
                             <Emoji symbol="✔️" />
                         </h7>
                     </p>
-                    <p>PLANEJADO =
+                    <p>
+                        PLANEJADO =
                         <h7>
                             {' '}
                             <Emoji symbol="✏️" />
                         </h7>
                     </p>
-                    <p>ATRASADO = 
+                    <p>
+                        ATRASADO = 
                         <h7>
-                            <Emoji symbol = "➖" />
+                            <Emoji symbol="➖" />
                             </h7>
                             </p>
                         
-                    <p>PROBLEMA =
+                    <p>
+                        PROBLEMA =
                         <h7>
-                            <Emoji symbol = "❌" />
+                            <Emoji symbol="❌" />
                             </h7>
                           </p>
                 </div>
@@ -245,9 +273,24 @@ export default function Operador() {
                         <MdChevronRight size={55} color="#000" />
                     </button>
                 </div>
+                
                 <div>
+                    {!auxSetor ?
                     <strong>SETOR : {setor}</strong>
-                </div>
+                    :
+                        <FormControl variant="outlined">
+                            <strong>SETOR:</strong>
+                            <Select native value={setor} onChange={handleSetor}>
+                            {arrSetor.map(s => (
+                                <option key={s.name} value={s.name}>
+                                    {s.name}
+                                </option>
+                            ))}
+                        </Select>
+                    </FormControl>
+                }
+                </div> 
+                
                 <span />
                 <span />
             </header>
@@ -300,999 +343,833 @@ export default function Operador() {
                             <td>Quadrimestral</td>
                         </tr>
                         <tr>
-                            <td>Documentação e registros operacionais</td>
-                            <td>
+                            <td className="a">
+                                Documentação e registros operacionais
+                            </td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
-                        dia={segunda}
+                        dia={segundaBD}
                         today={todaySegunda} 
                         auditoria={auditoriasT1Segunda} 
                         plano={planoT1Area1}  
-                        subItem = "1" />
+                        subItem = "1"
+                        semana = {actualWeek}
+                        turno='1'
+                         />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                            late={lateSegunda}
-                           dia={segunda}
+                           dia={segundaBD}
                            today={todaySegunda} 
                            auditoria={auditoriasT2Segunda} 
                            plano={planoT2Area1}  
-                           subItem = "1" />
+                           subItem = "1"
+                           semana = {actualWeek}
+                           turno='2'
+                            />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
-                        dia={segunda}
+                        dia={segundaBD}
                         today={todaySegunda} 
                         auditoria={auditoriasT3Segunda} 
                         plano={planoT3Area1}  
-                        subItem = "1" />
+                        subItem="1"
+                        semana={actualWeek}
+                        turno='3'
+                         />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
-                        dia={terça}
+                        dia={terçaBD}
                         today={todayTerça} 
                         auditoria={auditoriasT1Terça} 
                         plano={planoT1Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana = {actualWeek}
+                        turno = '1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
-                        dia={terça}
+                        dia={terçaBD}
                         today={todayTerça} 
                         auditoria={auditoriasT2Terça} 
                         plano={planoT2Area1}  
-                        subItem = "1" />
+                        subItem = "1"
+                        semana = {actualWeek}
+                        turno = '2'
+                         />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
-                        dia={terça}
+                        dia={terçaBD}
                         today={todayTerça} 
                         auditoria={auditoriasT3Terça} 
                         plano={planoT3Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='3'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuarta}
-                        dia={quarta}
+                        dia={quartaBD}
                         today={todayQuarta} 
                         auditoria={auditoriasT1Quarta} 
                         plano={planoT1Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
-                        dia={quarta}
+                        dia={quartaBD}
                         today={todayQuarta} 
                         auditoria={auditoriasT2Quarta} 
                         plano={planoT2Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='2'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
-                        dia={quarta}
+                        dia={quartaBD}
                         today={todayQuarta} 
                         auditoria={auditoriasT3Quarta} 
                         plano={planoT3Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='3'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuinta}
-                        dia={quinta}
+                        dia={quintaBD}
                         today={todayQuinta} 
                         auditoria={auditoriasT1Quinta} 
                         plano={planoT1Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
+                        <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quintaBD}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT2Quinta} 
+                                    plano={planoT2Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno='2'
+                                />
+                            </td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT2Quinta} 
-                        plano={planoT2Area1}  
-                        subItem = "1" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
+                        dia={quintaBD}
                         today={todayQuinta} 
                         auditoria={auditoriasT3Quinta} 
                         plano={planoT3Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='3'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
-                        dia={sexta}
+                        dia={sextaBD}
                         today={todaySexta} 
                         auditoria={auditoriasT1Sexta} 
                         plano={planoT1Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
-                        dia={sexta}
+                        dia={sextaBD}
                         today={todaySexta} 
                         auditoria={auditoriasT2Sexta} 
                         plano={planoT2Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='2'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
-                        dia={sexta}
+                        dia={sextaBD}
                         today={todaySexta} 
                         auditoria={auditoriasT3Sexta} 
                         plano={planoT3Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='3'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
-                        dia={sabado}
+                        dia={sabadoBD}
                         today={todaySabado} 
                         auditoria={auditoriasT1Sabado} 
                         plano={planoT1Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
-                        dia={sabado}
+                        dia={sabadoBD}
                         today={todaySabado} 
                         auditoria={auditoriasT2Sabado} 
                         plano={planoT2Area1}  
-                        subItem = "1" />
+                        subItem = "1" 
+                        semana={actualWeek}
+                        turno='2'
+                        />
                             </td>
                            
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
-                                dia={sabado}
+                                dia={sabadoBD}
                                     today={todaySabado} 
                                     auditoria={auditoriasT3Sabado} 
                                     plano={planoT3Area1}
                                     subItem="1"
+                                    semana={actualWeek}
+                                    turno='3'
                                 />
                             </td>
                              <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="1"
+                                />
                              </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
+                                    subItem="1"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="1"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="1"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="1"
+                                />
                             </td>
                             <td>
-                              
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="1"
+                                />
                             </td>
                         </tr>
                         <tr>
-                            <td>Meios de Controle</td>
-                            <td>
+                            <td className="a">Meios de Controle</td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
-                        dia={segunda}
+                        dia={segundaBD}
                         today={todaySegunda} 
                         auditoria={auditoriasT1Segunda} 
                         plano={planoT1Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
-                        dia={segunda}
+                        dia={segundaBD}
                         today={todaySegunda} 
                         auditoria={auditoriasT2Segunda} 
                         plano={planoT2Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='2'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
-                        dia={segunda}
+                        dia={segundaBD}
                         today={todaySegunda} 
                         auditoria={auditoriasT3Segunda} 
                         plano={planoT3Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='3'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
-                        dia={terça}
+                        dia={terçaBD}
                         today={todayTerça} 
                         auditoria={auditoriasT1Terça} 
                         plano={planoT1Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
-                        dia={terça}
+                        dia={terçaBD}
                         today={todayTerça} 
                         auditoria={auditoriasT2Terça} 
                         plano={planoT2Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='2'
+                        />
                             </td>
-      
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
-                        dia={terça}
+                        dia={terçaBD}
                         today={todayTerça} 
                         auditoria={auditoriasT3Terça} 
                         plano={planoT3Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='3'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuarta}
-                        dia={quarta}
+                        dia={quartaBD}
                         today={todayQuarta} 
                         auditoria={auditoriasT1Quarta} 
                         plano={planoT1Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
-                        dia={quarta}
+                        dia={quartaBD}
                         today={todayQuarta} 
                         auditoria={auditoriasT2Quarta} 
                         plano={planoT2Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='2'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
-                        dia={quarta}
+                        dia={quartaBD}
                         today={todayQuarta} 
                         auditoria={auditoriasT3Quarta} 
                         plano={planoT3Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='3'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuinta}
-                        dia={quinta}
+                        dia={quintaBD}
                         today={todayQuinta} 
                         auditoria={auditoriasT1Quinta} 
                         plano={planoT1Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
-                        dia={quinta}
+                        dia={quintaBD}
                         today={todayQuinta} 
                         auditoria={auditoriasT2Quinta} 
                         plano={planoT2Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='2'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
-                        dia={quinta}
+                        dia={quintaBD}
                         today={todayQuinta} 
                         auditoria={auditoriasT3Quinta} 
                         plano={planoT3Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='3'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
-                        dia={sexta}
+                        dia={sextaBD}
                         today={todaySexta} 
                         auditoria={auditoriasT1Sexta} 
                         plano={planoT1Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
-                        dia={sexta}
+                        dia={sextaBD}
                         today={todaySexta} 
                         auditoria={auditoriasT2Sexta} 
                         plano={planoT2Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='2'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
-                        dia={sexta}
+                        dia={sextaBD}
                         today={todaySexta} 
                         auditoria={auditoriasT3Sexta} 
                         plano={planoT3Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='3'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
-                        dia={sabado}
+                        dia={sabadoBD}
                         today={todaySabado} 
                         auditoria={auditoriasT1Sabado} 
                         plano={planoT1Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='1'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
-                        dia={sabado}
+                        dia={sabadoBD}
                         today={todaySabado} 
                         auditoria={auditoriasT2Sabado} 
                         plano={planoT2Area2}  
-                        subItem = "2" />
+                        subItem = "2" 
+                        semana={actualWeek}
+                        turno='2'
+                        />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado} 
                                     auditoria={auditoriasT3Sabado} 
                                     plano={planoT3Area2}
                                     subItem="2"
+                                    semana={actualWeek}
+                                    turno='3'
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
+                            <td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="2"
+                                />
                              </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
+                                    subItem="2"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="2"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="2"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="2"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>                        </tr>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="2"
+                                />
+                            </td>                       
+                             </tr>
                         <tr>
-                            <td>POKA YOKE</td>
+                            <td className="a">POKA YOKE</td>
 
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT1Segunda} 
-                        plano={planoT1Area3}  
-                        subItem = "3" />
+                            <td  className="a">
+                       <h3>N/A</h3>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT2Segunda} 
-                        plano={planoT2Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT3Segunda} 
-                        plano={planoT3Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT1Terça} 
-                        plano={planoT1Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                      <h3>N/A</h3>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT2Terça} 
-                        plano={planoT2Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                       <h3>N/A</h3>
                             </td>
       
-                            <td>
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT3Terça} 
-                        plano={planoT3Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT1Quarta} 
-                        plano={planoT1Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT2Quarta} 
-                        plano={planoT2Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT3Quarta} 
-                        plano={planoT3Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                            <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT1Quinta} 
-                        plano={planoT1Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3> </td>
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT2Quinta} 
-                        plano={planoT2Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT3Quinta} 
-                        plano={planoT3Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT1Sexta} 
-                        plano={planoT1Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h3>N/A</h3>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT2Sexta} 
-                        plano={planoT2Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h2>N/A</h2>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT3Sexta} 
-                        plano={planoT3Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h2>N/A</h2>
                             </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT1Sabado} 
-                        plano={planoT1Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h2>N/A</h2>      
                             </td>
                            
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT2Sabado} 
-                        plano={planoT2Area3}  
-                        subItem = "3" />
+                            <td className="a">
+                            <h2>N/A</h2>
                             </td>
-                           
                             <td>
-                        <OperadorAuditoria
-                                    late={lateSabado}
-                                    dia={sabado}
-                                    today={todaySabado} 
-                                    auditoria={auditoriasT3Sabado} 
-                                    plano={planoT3Area3}
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="3"
+                                />
+                             </td>
+                            <td>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
                                     subItem="3"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
-                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="3"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="3"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="3"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>                        
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="3"
+                                />
+                            </td>                        
                            </tr>
                         <tr>
-                            <td>Treinamento</td>
-
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT1Segunda} 
-                        plano={planoT1Area4}  
-                        subItem = "4" />
+                            <td className="a">Treinamento</td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
                             </td>
                             <td>
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT2Segunda} 
-                        plano={planoT2Area4}  
-                        subItem = "4" />
-                            </td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="4"
+                                />
+                             </td>
                             <td>
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT3Segunda} 
-                        plano={planoT3Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT1Terça} 
-                        plano={planoT1Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT2Terça} 
-                        plano={planoT2Area4}  
-                        subItem = "4" />
-                            </td>
-      
-                            <td>
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT3Terça} 
-                        plano={planoT3Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT1Quarta} 
-                        plano={planoT1Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT2Quarta} 
-                        plano={planoT2Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT3Quarta} 
-                        plano={planoT3Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                            <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT1Quinta} 
-                        plano={planoT1Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT2Quinta} 
-                        plano={planoT2Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT3Quinta} 
-                        plano={planoT3Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT1Sexta} 
-                        plano={planoT1Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT2Sexta} 
-                        plano={planoT2Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT3Sexta} 
-                        plano={planoT3Area4}  
-                        subItem = "4" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT1Sabado} 
-                        plano={planoT1Area4}  
-                        subItem = "4" />
-                            </td>
-                           
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT2Sabado} 
-                        plano={planoT2Area4}  
-                        subItem = "4" />
-                            </td>
-                           
-                            <td>
-                        <OperadorAuditoria
-                                    late={lateSabado}
-                                    dia={sabado}
-                                    today={todaySabado} 
-                                    auditoria={auditoriasT3Sabado} 
-                                    plano={planoT3Area4}
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
                                     subItem="4"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
-                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="4"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="4"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="4"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="4"
+                                />
                             </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>
                         </tr>
                         <tr>
-                            <td>Gestão de não conformes</td>
+                            <td  className="a">Gestão de não conformes</td>
 
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT1Segunda} 
-                        plano={planoT1Area5}  
-                        subItem = "5" />
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td>
+                            <td className="a">
+                            <h2>N/A</h2>
+                            </td> 
+                            <td className="a">
+                            <h2>N/A</h2>
                             </td>
                             <td>
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT2Segunda} 
-                        plano={planoT2Area5}  
-                        subItem = "5" />
-                            </td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="5"
+                                />
+                             </td>
                             <td>
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT3Segunda} 
-                        plano={planoT3Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT1Terça} 
-                        plano={planoT1Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT2Terça} 
-                        plano={planoT2Area5}  
-                        subItem = "5" />
-                            </td>
-      
-                            <td>
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT3Terça} 
-                        plano={planoT3Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT1Quarta} 
-                        plano={planoT1Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT2Quarta} 
-                        plano={planoT2Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT3Quarta} 
-                        plano={planoT3Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                            <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT1Quinta} 
-                        plano={planoT1Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT2Quinta} 
-                        plano={planoT2Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT3Quinta} 
-                        plano={planoT3Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT1Sexta} 
-                        plano={planoT1Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT2Sexta} 
-                        plano={planoT2Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT3Sexta} 
-                        plano={planoT3Area5}  
-                        subItem = "5" />
-                            </td>
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT1Sabado} 
-                        plano={planoT1Area5}  
-                        subItem = "5" />
-                            </td>
-                           
-                            <td>
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT2Sabado} 
-                        plano={planoT2Area5}  
-                        subItem = "5" />
-                            </td>
-                           
-                            <td>
-                        <OperadorAuditoria
-                                    late={lateSabado}
-                                    dia={sabado}
-                                    today={todaySabado} 
-                                    auditoria={auditoriasT3Sabado} 
-                                    plano={planoT3Area5}
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
                                     subItem="5"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
-                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="5"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="5"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="5"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
-                            </td>
-                            <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>
-                        </tr>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="5"
+                                />
+                            </td>                        
+                            </tr>
                         <tr>
-                            <td>Alertas da qualidade</td>
-                            <td>
+                            <td className="a">Alertas da qualidade</td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1301,7 +1178,7 @@ export default function Operador() {
                         plano={planoT1Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1310,7 +1187,7 @@ export default function Operador() {
                         plano={planoT2Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1319,7 +1196,7 @@ export default function Operador() {
                         plano={planoT3Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1328,7 +1205,7 @@ export default function Operador() {
                         plano={planoT1Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1337,8 +1214,7 @@ export default function Operador() {
                         plano={planoT2Area6}  
                         subItem = "6" />
                             </td>
-      
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1347,7 +1223,7 @@ export default function Operador() {
                         plano={planoT3Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1356,7 +1232,7 @@ export default function Operador() {
                         plano={planoT1Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1365,7 +1241,7 @@ export default function Operador() {
                         plano={planoT2Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1374,7 +1250,7 @@ export default function Operador() {
                         plano={planoT3Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1383,7 +1259,7 @@ export default function Operador() {
                         plano={planoT1Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1392,7 +1268,7 @@ export default function Operador() {
                         plano={planoT2Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1401,7 +1277,7 @@ export default function Operador() {
                         plano={planoT3Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -1410,7 +1286,7 @@ export default function Operador() {
                         plano={planoT1Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -1419,7 +1295,7 @@ export default function Operador() {
                         plano={planoT2Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -1428,7 +1304,7 @@ export default function Operador() {
                         plano={planoT3Area6}  
                         subItem = "6" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -1437,8 +1313,7 @@ export default function Operador() {
                         plano={planoT1Area6}  
                         subItem = "6" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -1447,8 +1322,7 @@ export default function Operador() {
                         plano={planoT2Area6}  
                         subItem = "6" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                                     late={lateSabado}
                                     dia={sabado}
@@ -1458,41 +1332,53 @@ export default function Operador() {
                                     subItem="6"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
+                            <td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="6"
+                                />
                              </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
+                                    subItem="6"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="6"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="6"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="6"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="6"
+                                />
+                            </td>
                         </tr>
                         <tr>
-                            <td>Identificação e rastreabilidade</td>
+                            <td className="a">Identificação e rastreabilidade</td>
 
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1501,7 +1387,7 @@ export default function Operador() {
                         plano={planoT1Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1510,7 +1396,7 @@ export default function Operador() {
                         plano={planoT2Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1519,7 +1405,7 @@ export default function Operador() {
                         plano={planoT3Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1528,7 +1414,7 @@ export default function Operador() {
                         plano={planoT1Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1537,8 +1423,7 @@ export default function Operador() {
                         plano={planoT2Area7}  
                         subItem = "7" />
                             </td>
-      
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1547,7 +1432,7 @@ export default function Operador() {
                         plano={planoT3Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1556,7 +1441,7 @@ export default function Operador() {
                         plano={planoT1Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1565,7 +1450,7 @@ export default function Operador() {
                         plano={planoT2Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1574,7 +1459,7 @@ export default function Operador() {
                         plano={planoT3Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1583,7 +1468,7 @@ export default function Operador() {
                         plano={planoT1Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1592,7 +1477,7 @@ export default function Operador() {
                         plano={planoT2Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1601,7 +1486,7 @@ export default function Operador() {
                         plano={planoT3Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -1610,7 +1495,7 @@ export default function Operador() {
                         plano={planoT1Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -1619,7 +1504,7 @@ export default function Operador() {
                         plano={planoT2Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -1628,7 +1513,7 @@ export default function Operador() {
                         plano={planoT3Area7}  
                         subItem = "7" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -1637,8 +1522,7 @@ export default function Operador() {
                         plano={planoT1Area7}  
                         subItem = "7" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -1647,8 +1531,7 @@ export default function Operador() {
                         plano={planoT2Area7}  
                         subItem = "7" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                                     late={lateSabado}
                                     dia={sabado}
@@ -1658,41 +1541,53 @@ export default function Operador() {
                                     subItem="7"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
+                            <td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="7"
+                                />
                              </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
+                                    subItem="7"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="7"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="7"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="7"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="7"
+                                />
+                            </td>
                         </tr>
                         <tr>
-                            <td>5S</td>
+                            <td className="a">5S</td>
 
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1701,7 +1596,7 @@ export default function Operador() {
                         plano={planoT1Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1710,7 +1605,7 @@ export default function Operador() {
                         plano={planoT2Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1719,7 +1614,7 @@ export default function Operador() {
                         plano={planoT3Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1728,7 +1623,7 @@ export default function Operador() {
                         plano={planoT1Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1737,8 +1632,7 @@ export default function Operador() {
                         plano={planoT2Area8}  
                         subItem = "8" />
                             </td>
-      
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1747,7 +1641,7 @@ export default function Operador() {
                         plano={planoT3Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1756,7 +1650,7 @@ export default function Operador() {
                         plano={planoT1Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1765,7 +1659,7 @@ export default function Operador() {
                         plano={planoT2Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1774,7 +1668,7 @@ export default function Operador() {
                         plano={planoT3Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1783,7 +1677,7 @@ export default function Operador() {
                         plano={planoT1Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1792,7 +1686,7 @@ export default function Operador() {
                         plano={planoT2Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1801,7 +1695,7 @@ export default function Operador() {
                         plano={planoT3Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -1810,7 +1704,7 @@ export default function Operador() {
                         plano={planoT1Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -1819,7 +1713,7 @@ export default function Operador() {
                         plano={planoT2Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -1828,7 +1722,7 @@ export default function Operador() {
                         plano={planoT3Area8}  
                         subItem = "8" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -1837,8 +1731,7 @@ export default function Operador() {
                         plano={planoT1Area8}  
                         subItem = "8" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -1847,8 +1740,7 @@ export default function Operador() {
                         plano={planoT2Area8}  
                         subItem = "8" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                                     late={lateSabado}
                                     dia={sabado}
@@ -1858,41 +1750,53 @@ export default function Operador() {
                                     subItem="8"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
+                            <td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="8"
+                                />
                              </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
+                                    subItem="8"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="8"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="8"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="8"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="8"
+                                />
+                            </td>
                         </tr>
                         <tr>
-                            <td>Segurança / Meio ambiente</td>
+                            <td className="a">Segurança / Meio ambiente</td>
 
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1901,7 +1805,7 @@ export default function Operador() {
                         plano={planoT1Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1910,7 +1814,7 @@ export default function Operador() {
                         plano={planoT2Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -1919,7 +1823,7 @@ export default function Operador() {
                         plano={planoT3Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1928,7 +1832,7 @@ export default function Operador() {
                         plano={planoT1Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1937,8 +1841,7 @@ export default function Operador() {
                         plano={planoT2Area9}  
                         subItem = "9" />
                             </td>
-      
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -1947,7 +1850,7 @@ export default function Operador() {
                         plano={planoT3Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1956,7 +1859,7 @@ export default function Operador() {
                         plano={planoT1Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1965,7 +1868,7 @@ export default function Operador() {
                         plano={planoT2Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -1974,7 +1877,7 @@ export default function Operador() {
                         plano={planoT3Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1983,7 +1886,7 @@ export default function Operador() {
                         plano={planoT1Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -1992,7 +1895,7 @@ export default function Operador() {
                         plano={planoT2Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2001,7 +1904,7 @@ export default function Operador() {
                         plano={planoT3Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2010,7 +1913,7 @@ export default function Operador() {
                         plano={planoT1Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2019,7 +1922,7 @@ export default function Operador() {
                         plano={planoT2Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2028,7 +1931,7 @@ export default function Operador() {
                         plano={planoT3Area9}  
                         subItem = "9" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -2038,7 +1941,7 @@ export default function Operador() {
                         subItem = "9" />
                             </td>
                            
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -2048,7 +1951,7 @@ export default function Operador() {
                         subItem = "9" />
                             </td>
                            
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                                     late={lateSabado}
                                     dia={sabado}
@@ -2058,41 +1961,53 @@ export default function Operador() {
                                     subItem="9"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
+                            <td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="9"
+                                />
                              </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
+                                    subItem="9"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="9"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="9"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="9"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="9"
+                                />
+                            </td>
                         </tr>
                         <tr>
-                            <td>TPM</td>
+                            <td className="a">TPM</td>
 
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -2101,7 +2016,7 @@ export default function Operador() {
                         plano={planoT1Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -2110,7 +2025,7 @@ export default function Operador() {
                         plano={planoT2Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -2119,7 +2034,7 @@ export default function Operador() {
                         plano={planoT3Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -2128,7 +2043,7 @@ export default function Operador() {
                         plano={planoT1Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -2137,8 +2052,7 @@ export default function Operador() {
                         plano={planoT2Area10}  
                         subItem = "10" />
                             </td>
-      
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -2147,7 +2061,7 @@ export default function Operador() {
                         plano={planoT3Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -2156,7 +2070,7 @@ export default function Operador() {
                         plano={planoT1Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -2165,7 +2079,7 @@ export default function Operador() {
                         plano={planoT2Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -2174,7 +2088,7 @@ export default function Operador() {
                         plano={planoT3Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2183,7 +2097,7 @@ export default function Operador() {
                         plano={planoT1Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2192,7 +2106,7 @@ export default function Operador() {
                         plano={planoT2Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2201,7 +2115,7 @@ export default function Operador() {
                         plano={planoT3Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2210,7 +2124,7 @@ export default function Operador() {
                         plano={planoT1Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2219,7 +2133,7 @@ export default function Operador() {
                         plano={planoT2Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2228,7 +2142,7 @@ export default function Operador() {
                         plano={planoT3Area10}  
                         subItem = "10" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -2237,8 +2151,7 @@ export default function Operador() {
                         plano={planoT1Area10}  
                         subItem = "10" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -2247,8 +2160,7 @@ export default function Operador() {
                         plano={planoT2Area10}  
                         subItem = "10" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                                     late={lateSabado}
                                     dia={sabado}
@@ -2258,41 +2170,53 @@ export default function Operador() {
                                     subItem="10"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
+                            <td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="10"
+                                />
                              </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
+                                    subItem="10"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="10"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="10"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="10"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="10"
+                                />
+                            </td>
                         </tr>
                         <tr>
-                            <td>Disciplina</td>
+                            <td className="a">Disciplina</td>
 
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -2301,7 +2225,7 @@ export default function Operador() {
                         plano={planoT1Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -2310,7 +2234,7 @@ export default function Operador() {
                         plano={planoT2Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -2319,7 +2243,7 @@ export default function Operador() {
                         plano={planoT3Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -2328,7 +2252,7 @@ export default function Operador() {
                         plano={planoT1Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -2337,8 +2261,7 @@ export default function Operador() {
                         plano={planoT2Area11}  
                         subItem = "11" />
                             </td>
-      
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -2347,7 +2270,7 @@ export default function Operador() {
                         plano={planoT3Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -2356,7 +2279,7 @@ export default function Operador() {
                         plano={planoT1Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -2365,7 +2288,7 @@ export default function Operador() {
                         plano={planoT2Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -2374,7 +2297,7 @@ export default function Operador() {
                         plano={planoT3Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2383,7 +2306,7 @@ export default function Operador() {
                         plano={planoT1Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2392,7 +2315,7 @@ export default function Operador() {
                         plano={planoT2Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2401,7 +2324,7 @@ export default function Operador() {
                         plano={planoT3Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2410,7 +2333,7 @@ export default function Operador() {
                         plano={planoT1Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2419,7 +2342,7 @@ export default function Operador() {
                         plano={planoT2Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2428,7 +2351,7 @@ export default function Operador() {
                         plano={planoT3Area11}  
                         subItem = "11" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -2437,8 +2360,7 @@ export default function Operador() {
                         plano={planoT1Area11}  
                         subItem = "11" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -2447,8 +2369,7 @@ export default function Operador() {
                         plano={planoT2Area11}  
                         subItem = "11" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                                     late={lateSabado}
                                     dia={sabado}
@@ -2458,41 +2379,53 @@ export default function Operador() {
                                     subItem="11"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
+                            <td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="11"
+                                />
                              </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
+                                    subItem="11"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="11"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="11"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="11"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>
-                        </tr>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="11"
+                                />
+                            </td>                        
+                            </tr>
                         <tr>
-                            <td>1ª Peça OK</td>
+                            <td className="a">1ª Peça OK</td>
 
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -2501,7 +2434,7 @@ export default function Operador() {
                         plano={planoT1Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -2510,7 +2443,7 @@ export default function Operador() {
                         plano={planoT2Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSegunda}
                         dia={segunda}
@@ -2519,7 +2452,7 @@ export default function Operador() {
                         plano={planoT3Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -2528,7 +2461,7 @@ export default function Operador() {
                         plano={planoT1Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -2537,8 +2470,7 @@ export default function Operador() {
                         plano={planoT2Area12}  
                         subItem = "12" />
                             </td>
-      
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateTerça}
                         dia={terça}
@@ -2547,7 +2479,7 @@ export default function Operador() {
                         plano={planoT3Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -2556,7 +2488,7 @@ export default function Operador() {
                         plano={planoT1Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -2565,7 +2497,7 @@ export default function Operador() {
                         plano={planoT2Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                             <OperadorAuditoria
                         late={lateQuarta}
                         dia={quarta}
@@ -2574,7 +2506,7 @@ export default function Operador() {
                         plano={planoT3Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td  className="a">
                             <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2583,7 +2515,7 @@ export default function Operador() {
                         plano={planoT1Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2592,7 +2524,7 @@ export default function Operador() {
                         plano={planoT2Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateQuinta}
                         dia={quinta}
@@ -2601,7 +2533,7 @@ export default function Operador() {
                         plano={planoT3Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2610,7 +2542,7 @@ export default function Operador() {
                         plano={planoT1Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2619,7 +2551,7 @@ export default function Operador() {
                         plano={planoT2Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSexta}
                         dia={sexta}
@@ -2628,7 +2560,7 @@ export default function Operador() {
                         plano={planoT3Area12}  
                         subItem = "12" />
                             </td>
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -2637,8 +2569,7 @@ export default function Operador() {
                         plano={planoT1Area12}  
                         subItem = "12" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                         late={lateSabado}
                         dia={sabado}
@@ -2647,8 +2578,7 @@ export default function Operador() {
                         plano={planoT2Area12}  
                         subItem = "12" />
                             </td>
-                           
-                            <td>
+                            <td className="a">
                         <OperadorAuditoria
                                     late={lateSabado}
                                     dia={sabado}
@@ -2658,36 +2588,48 @@ export default function Operador() {
                                     subItem="12"
                                 />
                             </td>
-                             <td>
-                                    <button type="button">
-                                        <h2>Analista Qualidade</h2>
-                                    </button>
+                            <td>
+                             <SuperiorAuditoria
+                                    aux={AnalistaQualidade}
+                                    plano={plano}
+                                    subItem="12"
+                                />
                              </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Engenharia</h2>
-                                    </button>
+                                <SuperiorAuditoria
+                                    aux={EngenhariaProcesso}
+                                    plano={plano}
+                                    subItem="12"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Supervisao P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={SupervisaoProducao}
+                                    plano={plano}
+                                    subItem="12"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Cordenação P.</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={CoordenacaoProducao}
+                                    plano={plano}
+                                    subItem="12"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Gerente Qualidade</h2>
-                                    </button>
+                            <SuperiorAuditoria
+                                    aux={GerenteQualidade}
+                                    plano={plano}
+                                    subItem="12"
+                                />
                             </td>
                             <td>
-                                    <button type="button">
-                                        <h2>Plant Manager</h2>
-                                    </button>
-                           </td>
+                              <SuperiorAuditoria
+                                    aux={PlantManeger}
+                                    plano={plano}
+                                    subItem="12"
+                                />
+                            </td>
                         </tr>
                     </tbody>
                 </Table>

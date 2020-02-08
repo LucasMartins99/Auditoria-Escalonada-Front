@@ -1,8 +1,9 @@
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable import/no-named-as-default-member */
 import React from 'react';
 
 import { Switch } from 'react-router-dom';
 import Route from './Route';
-
 import Login from '../pages/Login/index';
 import CreateUser from '../pages/CreateUser/index';
 import Main from '../pages/Main/index';
@@ -27,19 +28,24 @@ export default function Routes() {
                 component={CreateAuditoria}
                 isPrivate
             />
+            <Route
+                path="/create-auditoria-operador/:id/:semana/:turno"
+                component={CreateAuditoria}
+                isPrivate
+            />
+            <Route
+                path="/create-plano-operador/:dataop"
+                component={CreatePlan}
+                isPrivate
+            />
             <Route path="/create-plano" component={CreatePlan} isPrivate />
+
             <Route
                 path="/new-auditoria/:id"
                 component={NewAuditoria}
-                is
                 isPrivate
             />
-            <Route
-                path="/new-auditoria"
-                component={NewAuditoria}
-                is
-                isPrivate
-            />
+            <Route path="/new-auditoria" component={NewAuditoria} isPrivate />
         </Switch>
     );
 }

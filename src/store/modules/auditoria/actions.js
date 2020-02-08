@@ -17,10 +17,11 @@ export function removeFromQuestion(id) {
         id,
     };
 }
-export function addAuditoriaRequest(auditoria_id) {
+export function addAuditoriaRequest(auditoria_id, cargo) {
     return {
         type: '@auditoria/ADD_REQUEST',
         auditoria_id,
+        cargo,
     };
 }
 export function addAuditoriaSuccess() {
