@@ -271,6 +271,7 @@ function CreatePlan(props) {
         }
         loadUsers();
     }, []);
+    
     return (
         <Container>
             <header>

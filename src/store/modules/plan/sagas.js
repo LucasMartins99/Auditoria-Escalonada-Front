@@ -64,7 +64,7 @@ export function* addToPlan({
             data,
         });
         toast.success('Ação cadastrada com sucesso');
-        history.push('/main');
+        history.push('/create-plano');
     }
     yield put(addToPlanSuccess(payload.data));
 }
