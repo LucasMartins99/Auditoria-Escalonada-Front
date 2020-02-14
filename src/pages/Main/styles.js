@@ -33,7 +33,7 @@ export const Time = styled.li`
     strong {
         display: block;
         color: ${props => (props.atrasado ? 'red' : '#7159c1')};
-        font-size: 20px;
+        font-size: 24px;
         font-weight: normal;
     }
     div {

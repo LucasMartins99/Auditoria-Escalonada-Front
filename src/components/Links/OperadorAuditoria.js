@@ -7,14 +7,26 @@ import { Container } from './styles';
 
 export default function OperadorAuditoria(props) {
     // eslint-disable-next-line react/prop-types
-    const { late, today, dia, auditoria, plano, subItem, semana, turno } = props;
+    const {
+        late,
+        today,
+        dia,
+        auditoria,
+        plano,
+        subItem,
+        semana,
+        turno,
+    } = props;
+
     const aux = parseInt(subItem, 0);
-    
+
     return (
         <Container>
             <button type="button">
                 {today && auditoria.length < 1 ? (
-                    <Link to={`/create-auditoria-operador/${dia}/${semana}/${turno}`}>
+                    <Link
+                        to={`/create-auditoria-operador/${dia}/${semana}/${turno}`}
+                    >
                         <h2>
                             <Emoji symbol="✏️" />
                         </h2>
@@ -28,7 +40,10 @@ export default function OperadorAuditoria(props) {
                     ) : (
                         plano.map(p => (
                             <h2>
-                                {p.subitem === aux && p.conclusao === null ? (
+                                {p.subitem === aux &&
+                                p.conclusao === null &&
+                                p.auditoria.turno === turno &&
+                                p.data === dia ? (
                                     <Link to="/planos">
                                         <Emoji symbol="❌" />
                                     </Link>
@@ -40,7 +55,9 @@ export default function OperadorAuditoria(props) {
                     )
                 ) : !late && !today ? (
                     <h2>
-                        <Link to={`/create-auditoria-operador/${dia}/${semana}/${turno}`}>
+                        <Link
+                            to={`/create-auditoria-operador/${dia}/${semana}/${turno}`}
+                        >
                             <Emoji symbol="➖" />
                         </Link>
                     </h2>

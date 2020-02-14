@@ -59,7 +59,7 @@ function CreatePlan(props) {
     const [users, setUsers] = useState([]);
     const [users2, setUsers2] = useState([]);
     const [img, setImg] = useState();
-    const [subitem, setSubitem] = useState();
+    const [maquinas, setMaquinas] = useState([]);
 
     const [aux] = useState([
         'Engenharia',
@@ -68,6 +68,149 @@ function CreatePlan(props) {
         'Linha Barras',
         'Linha Molas',
         'Kaizen',
+    ]);
+    const [forjas] = useState([
+        'Forjas Yadon',
+        'Forjas Jundiai 1',
+        'Forjas Jundiai 2',
+        'Forjas Gutman',
+        'Forjas Pesadas',
+    ]);
+    const [tubular] = useState([
+        'Dobra Tubular 1',
+        'Dobra Tubular 2',
+        'Forja Tubular 1',
+        'Forja Tubular 2',
+    ]);
+    const [fornos] = useState([
+        'Linha de Dobra 1',
+        'Linha de Dobra 2',
+        'Linha de Dobra 3',
+        'Linha de Dobra 4',
+    ]);
+    const [usinagem] = useState([
+        'Recalque',
+        'Tornos CNC',
+        'Indução Barra Reta',
+        'Furadeira',
+    ]);
+    const [jato] = useState([
+        'Jato 1',
+        'Jato 3',
+        'Calibragem 1',
+        'Calibragem 3',
+        'Calibragem 4',
+        'MIB 1',
+        'MIB 2',
+        'MIB 3',
+        'Gravação Barra Reta',
+    ]);
+    const [pintura] = useState([
+        'Pintura ETE',
+        'Pintura Secagem',
+        'Pintura Cabine de Pó',
+        'Pintura Forno Cura',
+    ]);
+    const [montagem] = useState([
+        'Montagem invision',
+        'Montagem Jeep 1',
+        'Montagem Jeep 2',
+        'Montagem Honda',
+        'Montagem GM S10',
+        'Montagem GM 287',
+        'Montagem GM GEM',
+        'Montagem Mitsubish',
+        'Montagem Toyota Yaris',
+        'Montagem Toyota Corolla',
+        'Montagem Hyundai 1',
+        'Montagem Hyundai 2',
+        'Montagem Overdrill',
+        'Montagem Presetting',
+        'Montagem Pesadas',
+    ]);
+    const [gluebushing] = useState([
+        'Aplicação de Cola',
+        'Flamming',
+        'Bloco Rigido',
+        'Forno Cura',
+    ]);
+    const [enroladeiraquente] = useState([
+        'Carregador',
+        'Aquecimento Indução',
+        'Enrolamento',
+        'Casset',
+        'Pig Tail',
+        'Tanque de tempera',
+        'Tratamento térmico',
+    ]);
+    const [enroladeirafrio] = useState([
+        'Box Bobinas',
+        'Gravação',
+        'Enroladeira Frio',
+    ]);
+    const [morita] = useState([
+        'Morita 1',
+        'Magna Flux',
+        'Jato/Warm peening',
+        'Morita 2',
+    ]);
+    const [pinturaMola] = useState(['Pintura', 'Morita 3', 'Acabamento']);
+
+    useEffect(() => {
+        switch (setor.setor) {
+            case 'Linha de Fornos':
+                setMaquinas(fornos);
+                break;
+            case 'Linha de Forjas':
+                setMaquinas(forjas);
+                break;
+            case 'Linha de Tubulares':
+                setMaquinas(tubular);
+                break;
+            case 'Usinagem/Recalque':
+                setMaquinas(usinagem);
+                break;
+            case 'Calibragem/Jatos/Cravamento de Arruelas':
+                setMaquinas(jato);
+                break;
+            case 'Linha de Pintura':
+                setMaquinas(pintura);
+                break;
+            case 'Linha de Montagem':
+                setMaquinas(montagem);
+                break;
+            case 'Glue Bushing':
+                setMaquinas(gluebushing);
+                break;
+            case 'Indução/Enroladeira L2/Forno':
+                setMaquinas(enroladeiraquente);
+                break;
+            case 'Enroladeira Frio':
+                setMaquinas(enroladeirafrio);
+                break;
+            case 'Morita 1/Magna Flux/Jato/Morita 2':
+                setMaquinas(morita);
+                break;
+            case 'Pintura/Morita 3/Acabamento':
+                setMaquinas(pinturaMola);
+                break;
+
+            default:
+        }
+    }, [
+        setor.setor,
+        fornos,
+        forjas,
+        tubular,
+        usinagem,
+        jato,
+        pintura,
+        montagem,
+        enroladeiraquente,
+        enroladeirafrio,
+        morita,
+        pinturaMola,
+        gluebushing,
     ]);
 
     const [date2, setDate2] = useState(addWeeks(new Date(), 1));
@@ -181,12 +324,19 @@ function CreatePlan(props) {
                                     inputRef={register}
                                 />
 
-                                <TextField
-                                    variant="outlined"
-                                    name="maquina"
-                                    placeholder="maquina"
+                                <Select
+                                    native
                                     inputRef={register}
-                                />
+                                    name="maquina"
+                                    variant="outlined"
+                                    className={classes.option}
+                                >
+                                    {maquinas.map(a => (
+                                        <option key={a} value={a}>
+                                            {a}
+                                        </option>
+                                    ))}
+                                </Select>
 
                                 <TextField
                                     name="acao"
@@ -203,8 +353,11 @@ function CreatePlan(props) {
                                     className={classes.option}
                                     onChange={handleArea}
                                 >
-                                    <option disabled value="Não definido">
+                                    <option selected value="Não definido">
                                         Area responsavel
+                                    </option>
+                                    <option value="Não definido">
+                                        Não definido
                                     </option>
                                     {aux.map(a => (
                                         <option key={a} value={a}>
@@ -219,7 +372,7 @@ function CreatePlan(props) {
                                     variant="outlined"
                                     className={classes.option}
                                 >
-                                    <option disabled value="Não definido">
+                                    <option selected value="Não definido">
                                         Escolha o responsavel
                                     </option>
                                     <option value="Não definido">
@@ -250,6 +403,7 @@ function CreatePlan(props) {
                                         }}
                                     />
                                 </MuiPickersUtilsProvider>
+                                <p />
                                 <input
                                     type="file"
                                     id="avatar"
@@ -260,8 +414,11 @@ function CreatePlan(props) {
                                     name="avatar id"
                                 />
                             </content>
+                            <p />
 
-                            <button type="submit">Enviar</button>
+                            <button className="button" type="submit">
+                                ENVIAR
+                            </button>
                         </form>
                     </Card>
                 ))}

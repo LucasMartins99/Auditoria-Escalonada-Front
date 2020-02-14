@@ -87,12 +87,18 @@ export default function Main() {
                         realizado={auditoria.realizado}
                     >
                         <strong>Semana: {auditoria.semana}</strong>
-                        <p>{auditoria.setor}</p>
-                        <span>
-                            {auditoria.late && auditoria.status !== 'Realizado'
-                                ? 'Atrasado'
-                                : auditoria.status}
-                        </span>
+                        <p>
+                            <h5>{auditoria.setor}</h5>
+                        </p>
+                        <h5>{auditoria.obs}</h5>
+                        <p>
+                            <span>
+                                {auditoria.late &&
+                                auditoria.status !== 'Realizado'
+                                    ? 'Atrasado'
+                                    : auditoria.status}
+                            </span>
+                        </p>
                         <div>
                             {auditoria.status === 'Realizado' ? (
                                 <span />

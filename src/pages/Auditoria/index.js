@@ -292,8 +292,8 @@ function Auditoria(props) {
                         <option value="Coordenador Produção">
                             Coordenador Produção
                         </option>
-                        <option value="Analista da Qualidade">
-                            Analista da Qualidade
+                        <option value="Analista Qualidade">
+                            Analista Qualidade
                         </option>
                         <option value="Supervisor Produção">
                             Supervisor Produção

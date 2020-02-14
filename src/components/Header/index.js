@@ -28,7 +28,12 @@ export default function Header() {
                         <Link to="/indicadores">
                             <li>INDICADORES</li>
                         </Link>
-
+                        <Link to="/new-auditoria">
+                            <li>ATRIBUIR</li>
+                        </Link>
+                        <Link to="/operador">
+                            <li>GV</li>
+                        </Link>
                         <Link to="/">
                             <li onClick={handleSignOut}>SAIR</li>
                         </Link>

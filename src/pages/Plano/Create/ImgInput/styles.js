@@ -19,6 +19,6 @@ export const Container = styled.div`
         font-weight: 700;
         font-size: 10pt;
         max-width: 220px;
-        margin-right: 30px;
+        margin-right: 20px;
     }
 `;

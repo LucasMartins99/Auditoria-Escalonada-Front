@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { darken } from 'polished';
 
 export const Container = styled.div`
     padding-top: 30px;
@@ -47,7 +48,7 @@ export const Card = styled.div`
         background: linear-gradient(top, #f9f9f9, #e3e3e3);
         border: 1px solid #999;
         border-radius: 3px;
-        padding: 5px 8px;
+        padding: 5px 7px;
         outline: none;
         white-space: nowrap;
         -webkit-user-select: none;
@@ -55,8 +56,19 @@ export const Card = styled.div`
         text-shadow: 1px 1px #fff;
         font-weight: 700;
         font-size: 10pt;
-        max-width: 220px;
-        margin-right: 30px;
+        max-width: 210px;
+    }
+    .button {
+        height: 34px;
+        background: #3b9eff;
+        color: #fff;
+        border: 0;
+        border-radius: 4px;
+        font-size: 20px;
+        transition: background 0.2;
+        &:hover {
+            background: ${darken(0.03, '#3b9eff')};
+        }
     }
     span {
         color: black;

@@ -34,6 +34,7 @@ function ModalForm(props) {
     const [re, setRe] = useState('');
     const setor = useSelector(state => state.user.profile.area);
     const cargo = useSelector(state => state.user.profile.cargo);
+
     const handleName = event => {
         setName(event.target.value);
     };

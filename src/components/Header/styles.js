@@ -30,7 +30,8 @@ export const Content = styled.div`
     }
     li {
         float: left;
-        padding: 0 35px;
+        padding: 0 27px;
+
         &:hover {
             background-color: grey;
             border-radius: 3px;

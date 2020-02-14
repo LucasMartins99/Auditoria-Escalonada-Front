@@ -22,6 +22,18 @@ class Auditoria extends Component {
         this.setState({data2: params.id});
         this.setState({semana: params.semana});
         this.setState({turno: params.turno});
+        if(params.id !== undefined){
+            const response = await api.get('question-operador');
+            this.setState({ questions: response.data });
+        const data = response.data.map(question => {
+            return {
+                nClick: false,
+                Click: false,
+                ...question
+            }
+        })
+        this.setState({ questions: data });
+        }else{
         const response = await api.get('all-questions');
         this.setState({ questions: response.data });
         const data = response.data.map(question => {
@@ -32,6 +44,9 @@ class Auditoria extends Component {
             }
         })
         this.setState({ questions: data });
+       }
+       
+       
     }
     
      
@@ -42,12 +57,19 @@ class Auditoria extends Component {
         addToQuestionRequest(id);
         const aux = questions.filter(q => q.id === id).values();
         let i;
+        if(data2 !== undefined){
         for(let letter of aux){
-         i = letter.id -1;
+         i = letter.aux -1;
         }
         questions[i].nClick=true;
         questions[i].Click=true;
-      
+    }else{
+        for(let letter of aux){
+            i = letter.id -1;
+           }
+           questions[i].nClick=true;
+           questions[i].Click=true;
+    }
         const data = questions.map(q => ({
             ...q
         }));
@@ -57,15 +79,23 @@ class Auditoria extends Component {
     handleRemoveAction = id => {
         const { removeFromQuestion } = this.props;
         const {questions}  = this.state;
+        const {data2} = this.state;
         removeFromQuestion(id);
         const aux = questions.filter(q => q.id === id).values();
         let i;
+        if(data2 !== undefined){
         for(let letter of aux){
-         i = letter.id -1;
+         i = letter.aux -1;
         }
         questions[i].nClick=true;
         questions[i].Click=false;
-      
+    }else{
+        for(let letter of aux){
+            i = letter.id -1;
+           }
+           questions[i].nClick=true;
+           questions[i].Click=false;
+    }
         const data = questions.map(q => ({
             ...q
         }));
@@ -96,6 +126,7 @@ class Auditoria extends Component {
         function handleBack() {
             history.push('/main');
         }
+        
 
         return (
             <Container>

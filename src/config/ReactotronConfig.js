@@ -3,7 +3,7 @@ import { reactotronRedux } from 'reactotron-redux';
 import reactotronSaga from 'reactotron-redux-saga';
 
 if (process.env.NODE_ENV === 'development') {
-    const tron = Reactotron.configure({ host: '192.168.0.110' })
+    const tron = Reactotron.configure({ host: '10.136.11.200' })
         .use(reactotronRedux())
         .use(reactotronSaga())
         .connect();
