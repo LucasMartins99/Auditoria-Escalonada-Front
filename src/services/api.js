@@ -1,6 +1,6 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https:devfabiolima.com',
+    baseURL: 'http://devfabiolima-com.umbler.net/',
 });
 export default api;
