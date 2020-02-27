@@ -4,6 +4,7 @@ import user from './user/reducer';
 import auditoria from './auditoria/reducer';
 import setor from './setor/reducer';
 import operador from './operador/reducer';
+import plan from './plan/reducer';
 
 export default combineReducers({
     auth,
@@ -11,4 +12,5 @@ export default combineReducers({
     auditoria,
     setor,
     operador,
+    plan,
 });

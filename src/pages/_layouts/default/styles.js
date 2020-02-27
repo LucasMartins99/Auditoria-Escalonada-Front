@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import media from 'styled-media-query';
 
 export const Wrapper = styled.div`
-    min-height: 750px;
+    height: 100%;
 
     ${media.lessThan('medium')`
     min-width: 900px;

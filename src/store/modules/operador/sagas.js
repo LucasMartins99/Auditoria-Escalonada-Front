@@ -10,6 +10,7 @@ function* addToOperador({ payload }) {
     const ano = parseInt(ano2, 0);
     const auditor = name;
     const status = 'Planejado';
+
     const response = yield call(api.post, 'auditoria', {
         setor,
         auditor,

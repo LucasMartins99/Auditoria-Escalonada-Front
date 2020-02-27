@@ -33,16 +33,23 @@ export const Center = styled.div`
 `;
 export const Card = styled.div`
     background: #fff;
-    max-width: 233px;
+    max-width: 243px;
     border-radius: 5px;
 
     form {
         display: flex;
         flex-direction: column;
-        background: #d8d8d8;
+        background: #cbfcb2;
         border-radius: 5px;
         padding: 10px;
     }
+    fieldset {
+        display: flex;
+        flex-direction: column;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
     .avatar {
         display: inline-block;
         background: linear-gradient(top, #f9f9f9, #e3e3e3);
@@ -66,9 +73,20 @@ export const Card = styled.div`
         border-radius: 4px;
         font-size: 20px;
         transition: background 0.2;
+        width: 203px;
         &:hover {
             background: ${darken(0.03, '#3b9eff')};
         }
+    }
+    .button2 {
+        height: 32px;
+        background: orange;
+        color: #fff;
+        border: 0;
+        border-radius: 4px;
+        font-size: 18px;
+
+        width: 203px;
     }
     span {
         color: black;

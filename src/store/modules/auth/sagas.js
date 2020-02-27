@@ -20,7 +20,7 @@ export function* login({ payload }) {
         api.defaults.headers.Authorization = `Bearer ${token}`;
         yield put(loginSuccess(token, user));
 
-        if (user.name === 'operador') {
+        if (password === 'operador123') {
             history.push('/operador');
         } else {
             history.push('/main');

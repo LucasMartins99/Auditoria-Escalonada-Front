@@ -49,7 +49,7 @@ export default function Operador() {
         }
         loadSetores();
     }, []);
-    
+
     useEffect(() => {
         if (cargo !== 'Operador') {
             setAuxSetor(true);
@@ -218,10 +218,10 @@ export default function Operador() {
     const planoT3Area6 = planoT3.filter(a => a.subitem === 6).slice(0, 1);
     const planoT3Area8 = planoT3.filter(a => a.subitem === 8).slice(0, 1);
     const planoT3Area10 = planoT3.filter(a => a.subitem === 10).slice(0, 1);
-    
+
     const handleSetor = event => {
         setSetor(event.target.value);
-    }
+    };
     return (
         <Container>
             <header>
@@ -252,7 +252,7 @@ export default function Operador() {
                         </h7>
                     </p>
                 </div>
-                  <div>
+                <div>
                     <button type="button" onClick={handlePrevWeek}>
                         <MdChevronLeft size={55} color="#000" />
                     </button>
@@ -263,9 +263,9 @@ export default function Operador() {
                 </div>
 
                 <div>
-                    {!auxSetor ?
-                    <strong>SETOR : {setor}</strong>
-                    :
+                    {!auxSetor ? (
+                        <strong>SETOR : {setor}</strong>
+                    ) : (
                         <FormControl variant="outlined">
                             <strong>SETOR:</strong>
                             <Select native value={setor} onChange={handleSetor}>
@@ -275,9 +275,9 @@ export default function Operador() {
                                     </option>
                                 ))}
                             </Select>
-                       </FormControl>
-                    }
-                </div> 
+                        </FormControl>
+                    )}
+                </div>
 
                 <span />
                 <span />
@@ -335,229 +335,229 @@ export default function Operador() {
                                 Documentação e registros operacionais
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
+                                <OperadorAuditoria
                                     late={lateSegunda}
                                     dia={segundaBD}
-                                    today={todaySegunda} 
-                                    auditoria={auditoriasT1Segunda} 
-                                    plano={planoT1Area1}  
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT1Segunda}
+                                    plano={planoT1Area1}
                                     subItem="1"
                                     semana={actualWeek}
-                                    turno='1'
-                        />
+                                    turno="1"
+                                />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                           late={lateSegunda}
-                           dia={segundaBD}
-                           today={todaySegunda} 
-                           auditoria={auditoriasT2Segunda} 
-                           plano={planoT2Area1}  
-                           subItem = "1"
-                           semana = {actualWeek}
-                           turno='2'
-                            />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segundaBD}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT3Segunda} 
-                        plano={planoT3Area1}  
-                        subItem="1"
-                        semana={actualWeek}
-                        turno='3'
-                         />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terçaBD}
-                        today={todayTerça} 
-                        auditoria={auditoriasT1Terça} 
-                        plano={planoT1Area1}  
-                        subItem = "1" 
-                        semana = {actualWeek}
-                        turno = '1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terçaBD}
-                        today={todayTerça} 
-                        auditoria={auditoriasT2Terça} 
-                        plano={planoT2Area1}  
-                        subItem = "1"
-                        semana = {actualWeek}
-                        turno = '2'
-                         />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terçaBD}
-                        today={todayTerça} 
-                        auditoria={auditoriasT3Terça} 
-                        plano={planoT3Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quartaBD}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT1Quarta} 
-                        plano={planoT1Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quartaBD}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT2Quarta} 
-                        plano={planoT2Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quartaBD}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT3Quarta} 
-                        plano={planoT3Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quintaBD}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT1Quinta} 
-                        plano={planoT1Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                                    late={lateQuinta}
-                                    dia={quintaBD}
-                                    today={todayQuinta}
-                                    auditoria={auditoriasT2Quinta} 
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segundaBD}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT2Segunda}
                                     plano={planoT2Area1}
                                     subItem="1"
                                     semana={actualWeek}
-                                    turno='2'
+                                    turno="2"
                                 />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quintaBD}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT3Quinta} 
-                        plano={planoT3Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sextaBD}
-                        today={todaySexta} 
-                        auditoria={auditoriasT1Sexta} 
-                        plano={planoT1Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sextaBD}
-                        today={todaySexta} 
-                        auditoria={auditoriasT2Sexta} 
-                        plano={planoT2Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sextaBD}
-                        today={todaySexta} 
-                        auditoria={auditoriasT3Sexta} 
-                        plano={planoT3Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabadoBD}
-                        today={todaySabado} 
-                        auditoria={auditoriasT1Sabado} 
-                        plano={planoT1Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabadoBD}
-                        today={todaySabado} 
-                        auditoria={auditoriasT2Sabado} 
-                        plano={planoT2Area1}  
-                        subItem = "1" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                           
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                                dia={sabadoBD}
-                                    today={todaySabado} 
-                                    auditoria={auditoriasT3Sabado} 
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segundaBD}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT3Segunda}
                                     plano={planoT3Area1}
                                     subItem="1"
                                     semana={actualWeek}
-                                    turno='3'
+                                    turno="3"
                                 />
                             </td>
-                             <td>
-                             <SuperiorAuditoria
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terçaBD}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT1Terça}
+                                    plano={planoT1Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terçaBD}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT2Terça}
+                                    plano={planoT2Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terçaBD}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT3Terça}
+                                    plano={planoT3Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quartaBD}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT1Quarta}
+                                    plano={planoT1Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quartaBD}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT2Quarta}
+                                    plano={planoT2Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quartaBD}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT3Quarta}
+                                    plano={planoT3Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quintaBD}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT1Quinta}
+                                    plano={planoT1Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quintaBD}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT2Quinta}
+                                    plano={planoT2Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quintaBD}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT3Quinta}
+                                    plano={planoT3Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sextaBD}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT1Sexta}
+                                    plano={planoT1Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sextaBD}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT2Sexta}
+                                    plano={planoT2Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sextaBD}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT3Sexta}
+                                    plano={planoT3Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabadoBD}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT1Sabado}
+                                    plano={planoT1Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabadoBD}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT2Sabado}
+                                    plano={planoT2Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabadoBD}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT3Sabado}
+                                    plano={planoT3Area1}
+                                    subItem="1"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td>
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="1"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -566,28 +566,28 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="1"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="1"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="1"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="1"
@@ -597,228 +597,228 @@ export default function Operador() {
                         <tr>
                             <td className="a">Meios de Controle</td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segundaBD}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT1Segunda} 
-                        plano={planoT1Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segundaBD}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT1Segunda}
+                                    plano={planoT1Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segundaBD}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT2Segunda} 
-                        plano={planoT2Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segundaBD}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT2Segunda}
+                                    plano={planoT2Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segundaBD}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT3Segunda} 
-                        plano={planoT3Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terçaBD}
-                        today={todayTerça} 
-                        auditoria={auditoriasT1Terça} 
-                        plano={planoT1Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terçaBD}
-                        today={todayTerça} 
-                        auditoria={auditoriasT2Terça} 
-                        plano={planoT2Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terçaBD}
-                        today={todayTerça} 
-                        auditoria={auditoriasT3Terça} 
-                        plano={planoT3Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quartaBD}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT1Quarta} 
-                        plano={planoT1Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quartaBD}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT2Quarta} 
-                        plano={planoT2Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quartaBD}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT3Quarta} 
-                        plano={planoT3Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quintaBD}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT1Quinta} 
-                        plano={planoT1Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quintaBD}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT2Quinta} 
-                        plano={planoT2Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quintaBD}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT3Quinta} 
-                        plano={planoT3Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sextaBD}
-                        today={todaySexta} 
-                        auditoria={auditoriasT1Sexta} 
-                        plano={planoT1Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sextaBD}
-                        today={todaySexta} 
-                        auditoria={auditoriasT2Sexta} 
-                        plano={planoT2Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sextaBD}
-                        today={todaySexta} 
-                        auditoria={auditoriasT3Sexta} 
-                        plano={planoT3Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabadoBD}
-                        today={todaySabado} 
-                        auditoria={auditoriasT1Sabado} 
-                        plano={planoT1Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabadoBD}
-                        today={todaySabado} 
-                        auditoria={auditoriasT2Sabado} 
-                        plano={planoT2Area2}  
-                        subItem = "2" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                                    late={lateSabado}
-                                    dia={sabadoBD}
-                                    today={todaySabado} 
-                                    auditoria={auditoriasT3Sabado} 
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segundaBD}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT3Segunda}
                                     plano={planoT3Area2}
                                     subItem="2"
                                     semana={actualWeek}
-                                    turno='3'
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terçaBD}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT1Terça}
+                                    plano={planoT1Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terçaBD}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT2Terça}
+                                    plano={planoT2Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terçaBD}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT3Terça}
+                                    plano={planoT3Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quartaBD}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT1Quarta}
+                                    plano={planoT1Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quartaBD}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT2Quarta}
+                                    plano={planoT2Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quartaBD}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT3Quarta}
+                                    plano={planoT3Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quintaBD}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT1Quinta}
+                                    plano={planoT1Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quintaBD}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT2Quinta}
+                                    plano={planoT2Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quintaBD}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT3Quinta}
+                                    plano={planoT3Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sextaBD}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT1Sexta}
+                                    plano={planoT1Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sextaBD}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT2Sexta}
+                                    plano={planoT2Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sextaBD}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT3Sexta}
+                                    plano={planoT3Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabadoBD}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT1Sabado}
+                                    plano={planoT1Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabadoBD}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT2Sabado}
+                                    plano={planoT2Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabadoBD}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT3Sabado}
+                                    plano={planoT3Area2}
+                                    subItem="2"
+                                    semana={actualWeek}
+                                    turno="3"
                                 />
                             </td>
                             <td>
-                             <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="2"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -827,53 +827,38 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="2"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="2"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="2"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="2"
                                 />
-                            </td>                       
-                             </tr>
+                            </td>
+                        </tr>
                         <tr>
                             <td className="a">POKA YOKE</td>
 
                             <td className="a">
-                               <h3>N/A</h3>
-                            </td>
-                            <td className="a">
-                               <h3>N/A</h3>
-                            </td>
-                            <td className="a">
-                               <h3>N/A</h3>
-                            </td>
-                            <td className="a">
-                               <h3>N/A</h3>
-                            </td>
-                            <td className="a">
-                               <h3>N/A</h3>
-                            </td>
-                            <td className="a">
                                 <h3>N/A</h3>
                             </td>
                             <td className="a">
@@ -882,11 +867,6 @@ export default function Operador() {
                             <td className="a">
                                 <h3>N/A</h3>
                             </td>
-                            <td className="a">
-                                <h3>N/A</h3>
-                            </td>
-                            <td className="a">
-                                <h3>N/A</h3> </td>
                             <td className="a">
                                 <h3>N/A</h3>
                             </td>
@@ -906,18 +886,39 @@ export default function Operador() {
                                 <h3>N/A</h3>
                             </td>
                             <td className="a">
-                                <h3>N/A</h3>      
+                                <h3>N/A</h3>{' '}
+                            </td>
+                            <td className="a">
+                                <h3>N/A</h3>
+                            </td>
+                            <td className="a">
+                                <h3>N/A</h3>
+                            </td>
+                            <td className="a">
+                                <h3>N/A</h3>
+                            </td>
+                            <td className="a">
+                                <h3>N/A</h3>
+                            </td>
+                            <td className="a">
+                                <h3>N/A</h3>
+                            </td>
+                            <td className="a">
+                                <h3>N/A</h3>
+                            </td>
+                            <td className="a">
+                                <h3>N/A</h3>
                             </td>
                             <td className="a">
                                 <h3>N/A</h3>
                             </td>
                             <td>
-                             <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="3"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -926,34 +927,34 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="3"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="3"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="3"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="3"
                                 />
-                            </td>                        
-                           </tr>
+                            </td>
+                        </tr>
                         <tr>
                             <td className="a">Treinamento</td>
                             <td className="a">
@@ -987,7 +988,7 @@ export default function Operador() {
                                 <h3>N/A</h3>
                             </td>
                             <td className="a">
-                                 <h3>N/A</h3>
+                                <h3>N/A</h3>
                             </td>
                             <td className="a">
                                 <h3>N/A</h3>
@@ -1011,12 +1012,12 @@ export default function Operador() {
                                 <h3>N/A</h3>
                             </td>
                             <td>
-                             <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="4"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -1032,21 +1033,21 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="4"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="4"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="4"
@@ -1103,7 +1104,7 @@ export default function Operador() {
                             </td>
                             <td className="a">
                                 <h3>N/A</h3>
-                            </td> 
+                            </td>
                             <td className="a">
                                 <h3>N/A</h3>
                             </td>
@@ -1111,12 +1112,12 @@ export default function Operador() {
                                 <h3>N/A</h3>
                             </td>
                             <td>
-                             <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="5"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -1125,259 +1126,259 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="5"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="5"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="5"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="5"
                                 />
-                            </td>                        
-                            </tr>
+                            </td>
+                        </tr>
                         <tr>
                             <td className="a">Alertas da qualidade</td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segundaBD}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT1Segunda} 
-                        plano={planoT1Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segundaBD}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT1Segunda}
+                                    plano={planoT1Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT2Segunda} 
-                        plano={planoT2Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segunda}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT2Segunda}
+                                    plano={planoT2Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT3Segunda} 
-                        plano={planoT3Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT1Terça} 
-                        plano={planoT1Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT2Terça} 
-                        plano={planoT2Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT3Terça} 
-                        plano={planoT3Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT1Quarta} 
-                        plano={planoT1Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT2Quarta} 
-                        plano={planoT2Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT3Quarta} 
-                        plano={planoT3Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT1Quinta} 
-                        plano={planoT1Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT2Quinta} 
-                        plano={planoT2Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT3Quinta} 
-                        plano={planoT3Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT1Sexta} 
-                        plano={planoT1Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT2Sexta} 
-                        plano={planoT2Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT3Sexta} 
-                        plano={planoT3Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT1Sabado} 
-                        plano={planoT1Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT2Sabado} 
-                        plano={planoT2Area6}  
-                        subItem = "6" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                                    late={lateSabado}
-                                    dia={sabado}
-                                    today={todaySabado} 
-                                    auditoria={auditoriasT3Sabado} 
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segunda}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT3Segunda}
                                     plano={planoT3Area6}
                                     subItem="6"
                                     semana={actualWeek}
-                                    turno='3'
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terça}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT1Terça}
+                                    plano={planoT1Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terça}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT2Terça}
+                                    plano={planoT2Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terça}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT3Terça}
+                                    plano={planoT3Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quarta}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT1Quarta}
+                                    plano={planoT1Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quarta}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT2Quarta}
+                                    plano={planoT2Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quarta}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT3Quarta}
+                                    plano={planoT3Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quinta}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT1Quinta}
+                                    plano={planoT1Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quinta}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT2Quinta}
+                                    plano={planoT2Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quinta}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT3Quinta}
+                                    plano={planoT3Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sexta}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT1Sexta}
+                                    plano={planoT1Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sexta}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT2Sexta}
+                                    plano={planoT2Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sexta}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT3Sexta}
+                                    plano={planoT3Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT1Sabado}
+                                    plano={planoT1Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT2Sabado}
+                                    plano={planoT2Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT3Sabado}
+                                    plano={planoT3Area6}
+                                    subItem="6"
+                                    semana={actualWeek}
+                                    turno="3"
                                 />
                             </td>
                             <td>
-                             <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="6"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -1386,28 +1387,28 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="6"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="6"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="6"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="6"
@@ -1415,9 +1416,8 @@ export default function Operador() {
                             </td>
                         </tr>
                         <tr>
-                            <td className="a">Identificação e rastreabilidade</td>
                             <td className="a">
-                                <h3>N/A</h3>
+                                Identificação e rastreabilidade
                             </td>
                             <td className="a">
                                 <h3>N/A</h3>
@@ -1466,18 +1466,21 @@ export default function Operador() {
                             </td>
                             <td className="a">
                                 <h3>N/A</h3>
-                            </td> 
+                            </td>
                             <td className="a">
                                 <h3>N/A</h3>
                             </td>
-                            
-                                <td>
-                             <SuperiorAuditoria
+                            <td className="a">
+                                <h3>N/A</h3>
+                            </td>
+
+                            <td>
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="7"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -1486,28 +1489,28 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="7"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="7"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="7"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="7"
@@ -1518,228 +1521,228 @@ export default function Operador() {
                             <td className="a">5S</td>
 
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT1Segunda} 
-                        plano={planoT1Area8}  
-                        subItem = "8" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segunda}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT1Segunda}
+                                    plano={planoT1Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT2Segunda} 
-                        plano={planoT2Area8}  
-                        subItem = "8" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segunda}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT2Segunda}
+                                    plano={planoT2Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT3Segunda} 
-                        plano={planoT3Area8}  
-                        subItem = "8" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT1Terça} 
-                        plano={planoT1Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT2Terça} 
-                        plano={planoT2Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT3Terça} 
-                        plano={planoT3Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT1Quarta} 
-                        plano={planoT1Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT2Quarta} 
-                        plano={planoT2Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT3Quarta} 
-                        plano={planoT3Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT1Quinta} 
-                        plano={planoT1Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT2Quinta} 
-                        plano={planoT2Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT3Quinta} 
-                        plano={planoT3Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT1Sexta} 
-                        plano={planoT1Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT2Sexta} 
-                        plano={planoT2Area8}  
-                        subItem = "8" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT3Sexta} 
-                        plano={planoT3Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT1Sabado} 
-                        plano={planoT1Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT2Sabado} 
-                        plano={planoT2Area8}  
-                        subItem="8" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                                    late={lateSabado}
-                                    dia={sabado}
-                                    today={todaySabado} 
-                                    auditoria={auditoriasT3Sabado} 
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segunda}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT3Segunda}
                                     plano={planoT3Area8}
                                     subItem="8"
                                     semana={actualWeek}
-                                    turno='3'
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terça}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT1Terça}
+                                    plano={planoT1Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terça}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT2Terça}
+                                    plano={planoT2Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terça}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT3Terça}
+                                    plano={planoT3Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quarta}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT1Quarta}
+                                    plano={planoT1Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quarta}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT2Quarta}
+                                    plano={planoT2Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quarta}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT3Quarta}
+                                    plano={planoT3Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quinta}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT1Quinta}
+                                    plano={planoT1Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quinta}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT2Quinta}
+                                    plano={planoT2Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quinta}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT3Quinta}
+                                    plano={planoT3Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sexta}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT1Sexta}
+                                    plano={planoT1Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sexta}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT2Sexta}
+                                    plano={planoT2Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sexta}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT3Sexta}
+                                    plano={planoT3Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT1Sabado}
+                                    plano={planoT1Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT2Sabado}
+                                    plano={planoT2Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT3Sabado}
+                                    plano={planoT3Area8}
+                                    subItem="8"
+                                    semana={actualWeek}
+                                    turno="3"
                                 />
                             </td>
                             <td>
-                             <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="8"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -1748,28 +1751,28 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="8"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="8"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="8"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="8"
@@ -1829,17 +1832,17 @@ export default function Operador() {
                             </td>
                             <td className="a">
                                 <h3>N/A</h3>
-                            </td> 
+                            </td>
                             <td className="a">
                                 <h3>N/A</h3>
                             </td>
-                             <td>
-                             <SuperiorAuditoria
+                            <td>
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="9"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -1848,28 +1851,28 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="9"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="9"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="9"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="9"
@@ -1880,228 +1883,228 @@ export default function Operador() {
                             <td className="a">TPM</td>
 
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT1Segunda} 
-                        plano={planoT1Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segunda}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT1Segunda}
+                                    plano={planoT1Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT2Segunda} 
-                        plano={planoT2Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segunda}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT2Segunda}
+                                    plano={planoT2Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
                             </td>
                             <td className="a">
-                        <OperadorAuditoria
-                        late={lateSegunda}
-                        dia={segunda}
-                        today={todaySegunda} 
-                        auditoria={auditoriasT3Segunda} 
-                        plano={planoT3Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT1Terça} 
-                        plano={planoT1Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT2Terça} 
-                        plano={planoT2Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateTerça}
-                        dia={terça}
-                        today={todayTerça} 
-                        auditoria={auditoriasT3Terça} 
-                        plano={planoT3Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT1Quarta} 
-                        plano={planoT1Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT2Quarta} 
-                        plano={planoT2Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuarta}
-                        dia={quarta}
-                        today={todayQuarta} 
-                        auditoria={auditoriasT3Quarta} 
-                        plano={planoT3Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                            <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT1Quinta} 
-                        plano={planoT1Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT2Quinta} 
-                        plano={planoT2Area10}  
-                        subItem="10"
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateQuinta}
-                        dia={quinta}
-                        today={todayQuinta} 
-                        auditoria={auditoriasT3Quinta} 
-                        plano={planoT3Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT1Sexta} 
-                        plano={planoT1Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT2Sexta} 
-                        plano={planoT2Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSexta}
-                        dia={sexta}
-                        today={todaySexta} 
-                        auditoria={auditoriasT3Sexta} 
-                        plano={planoT3Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='3'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT1Sabado} 
-                        plano={planoT1Area10}  
-                        subItem="10" 
-                        semana={actualWeek}
-                        turno='1'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                        late={lateSabado}
-                        dia={sabado}
-                        today={todaySabado} 
-                        auditoria={auditoriasT2Sabado} 
-                        plano={planoT2Area10}  
-                        subItem = "10" 
-                        semana={actualWeek}
-                        turno='2'
-                        />
-                            </td>
-                            <td className="a">
-                        <OperadorAuditoria
-                                    late={lateSabado}
-                                    dia={sabado}
-                                    today={todaySabado} 
-                                    auditoria={auditoriasT3Sabado} 
+                                <OperadorAuditoria
+                                    late={lateSegunda}
+                                    dia={segunda}
+                                    today={todaySegunda}
+                                    auditoria={auditoriasT3Segunda}
                                     plano={planoT3Area10}
                                     subItem="10"
                                     semana={actualWeek}
-                                    turno='3'
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terça}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT1Terça}
+                                    plano={planoT1Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terça}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT2Terça}
+                                    plano={planoT2Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateTerça}
+                                    dia={terça}
+                                    today={todayTerça}
+                                    auditoria={auditoriasT3Terça}
+                                    plano={planoT3Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quarta}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT1Quarta}
+                                    plano={planoT1Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quarta}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT2Quarta}
+                                    plano={planoT2Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuarta}
+                                    dia={quarta}
+                                    today={todayQuarta}
+                                    auditoria={auditoriasT3Quarta}
+                                    plano={planoT3Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quinta}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT1Quinta}
+                                    plano={planoT1Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quinta}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT2Quinta}
+                                    plano={planoT2Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateQuinta}
+                                    dia={quinta}
+                                    today={todayQuinta}
+                                    auditoria={auditoriasT3Quinta}
+                                    plano={planoT3Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sexta}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT1Sexta}
+                                    plano={planoT1Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sexta}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT2Sexta}
+                                    plano={planoT2Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSexta}
+                                    dia={sexta}
+                                    today={todaySexta}
+                                    auditoria={auditoriasT3Sexta}
+                                    plano={planoT3Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="3"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT1Sabado}
+                                    plano={planoT1Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="1"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT2Sabado}
+                                    plano={planoT2Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="2"
+                                />
+                            </td>
+                            <td className="a">
+                                <OperadorAuditoria
+                                    late={lateSabado}
+                                    dia={sabado}
+                                    today={todaySabado}
+                                    auditoria={auditoriasT3Sabado}
+                                    plano={planoT3Area10}
+                                    subItem="10"
+                                    semana={actualWeek}
+                                    turno="3"
                                 />
                             </td>
                             <td>
-                             <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="10"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -2110,28 +2113,28 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="10"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="10"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="10"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="10"
@@ -2190,17 +2193,17 @@ export default function Operador() {
                             </td>
                             <td className="a">
                                 <h3>N/A</h3>
-                            </td> 
+                            </td>
                             <td className="a">
                                 <h3>N/A</h3>
                             </td>
                             <td>
-                             <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="11"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -2209,34 +2212,34 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="11"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="11"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="11"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="11"
                                 />
-                            </td>                        
-                            </tr>
+                            </td>
+                        </tr>
                         <tr>
                             <td className="a">1ª Peça OK</td>
 
@@ -2290,17 +2293,17 @@ export default function Operador() {
                             </td>
                             <td className="a">
                                 <h3>N/A</h3>
-                            </td> 
+                            </td>
                             <td className="a">
                                 <h3>N/A</h3>
-                            </td>   
+                            </td>
                             <td>
-                             <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={AnalistaQualidade}
                                     plano={plano}
                                     subItem="12"
                                 />
-                             </td>
+                            </td>
                             <td>
                                 <SuperiorAuditoria
                                     aux={EngenhariaProcesso}
@@ -2309,28 +2312,28 @@ export default function Operador() {
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={SupervisaoProducao}
                                     plano={plano}
                                     subItem="12"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={CoordenacaoProducao}
                                     plano={plano}
                                     subItem="12"
                                 />
                             </td>
                             <td>
-                            <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={GerenteQualidade}
                                     plano={plano}
                                     subItem="12"
                                 />
                             </td>
                             <td>
-                              <SuperiorAuditoria
+                                <SuperiorAuditoria
                                     aux={PlantManeger}
                                     plano={plano}
                                     subItem="12"

@@ -12,7 +12,6 @@ import pt from 'date-fns/locale/pt';
 import { MdChevronLeft, MdChevronRight, MdModeEdit } from 'react-icons/md';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'react-bootstrap';
-
 import api from '~/services/api';
 import { Container, Time } from './styles';
 import { addSetorRequest } from '~/store/modules/setor/actions';
