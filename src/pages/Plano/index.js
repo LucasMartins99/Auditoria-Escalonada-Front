@@ -184,6 +184,9 @@ function Plano(props) {
                                     SETOR
                                 </TableCell>
                                 <TableCell className={classes.head}>
+                                    MÁQUINA
+                                </TableCell>
+                                <TableCell className={classes.head}>
                                     PROBLEMA
                                 </TableCell>
                                 <TableCell className={classes.head}>
@@ -192,7 +195,6 @@ function Plano(props) {
                                 <TableCell className={classes.head}>
                                     RESPONSAVEL
                                 </TableCell>
-
                                 <TableCell className={classes.head}>
                                     DATA INICIO
                                 </TableCell>
@@ -228,8 +230,9 @@ function Plano(props) {
                                     ) : (
                                         ''
                                     )}
-                                    <TableCell>{p.item}</TableCell>
+                                    <TableCell>{p.question.text}</TableCell>
                                     <TableCell>{p.setor}</TableCell>
+                                    <TableCell>{p.maquina}</TableCell>
                                     <TableCell>{p.problema}</TableCell>
                                     <TableCell>{p.acao}</TableCell>
                                     <TableCell>{p.responsavel}</TableCell>
@@ -355,6 +358,11 @@ function Plano(props) {
                                             color="primary"
                                             className={classes.extendedIcon}
                                             startIcon={<CreateIcon />}
+                                            onClick={() =>
+                                                history.push(
+                                                    `update-plan/${p.id}`
+                                                )
+                                            }
                                         >
                                             {' '}
                                             EDITAR{' '}

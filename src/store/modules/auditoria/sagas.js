@@ -30,9 +30,9 @@ function* addToAuditoria({ auditoria_id, cargo }) {
             });
             toast.success('Auditoria Realizado com sucesso');
             yield put(addAuditoriaSuccess);
-            history.push('/main');
+            history.push('/operador');
         } catch (err) {
-            toast.error('Error ao realizar aaaaaaaaaaaaaaaaaaaauditoria');
+            toast.error('Error ao realizar auditoria');
             yield put(addAuditoriaFailure);
         }
     } else {
@@ -45,7 +45,7 @@ function* addToAuditoria({ auditoria_id, cargo }) {
             yield put(addAuditoriaSuccess);
             history.push('/main');
         } catch (err) {
-            toast.error('Error ao realizar auditoria');
+            /* toast.error('Error ao realizar auditoria'); */
             yield put(addAuditoriaFailure);
         }
     }

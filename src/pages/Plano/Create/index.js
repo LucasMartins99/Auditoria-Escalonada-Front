@@ -230,6 +230,7 @@ function CreatePlan(props) {
     function onSubmit(data) {
         const prazo = format(date2, 'yyy/MM/dd', { locale: pt });
         let avatar_id = img;
+
         if (avatar_id === undefined) {
             avatar_id = 1;
         }

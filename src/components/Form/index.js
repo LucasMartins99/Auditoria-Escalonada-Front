@@ -86,6 +86,7 @@ function Form(props) {
     }
     async function onSubmit(data) {
         const semana = getISOWeek(date2);
+        const actualSemana = getISOWeek(new Date());
         const ano = getYear(date2);
         const { auditor, setor, obs } = data;
         const aux = users.filter(u => u.name === data.auditor).slice(0, 1);
@@ -93,21 +94,44 @@ function Form(props) {
         aux.map(a => (cargo = a.cargo));
 
         if (id !== undefined) {
-            try {
-                await api.put(`auditoria/${id}`, {
-                    setor,
-                    semana,
-                    auditor,
-                    obs,
-                    cargo,
-                    ano,
-                });
-                toast.success('Auditoria alterada com sucesso');
-                history.push('/main');
-            } catch (err) {
-                toast.error('Falha na alteração da auditoria');
+            if (actualSemana < semana) {
+                const status = 'Planejado';
+                const data = date2;
+                try {
+                    await api.put(`auditoria/${id}`, {
+                        setor,
+                        semana,
+                        auditor,
+                        obs,
+                        cargo,
+                        ano,
+                        status,
+                        data,
+                    });
+                    toast.success('Auditoria alterada com sucesso');
+                    history.push('/main');
+                } catch (err) {
+                    toast.error('Falha na alteração da auditoria');
+                }
+            } else {
+                try {
+                    await api.put(`auditoria/${id}`, {
+                        setor,
+                        semana,
+                        auditor,
+                        obs,
+                        cargo,
+                        ano,
+                        data,
+                    });
+                    toast.success('Auditoria alterada com sucesso');
+                    history.push('/main');
+                } catch (err) {
+                    toast.error('Falha na alteração da auditoria');
+                }
             }
         } else {
+            const data = date2;
             try {
                 await api.post('auditoria', {
                     setor,
@@ -118,6 +142,7 @@ function Form(props) {
                     obs,
                     turno,
                     ano,
+                    data,
                 });
                 toast.success('Auditoria atribuida com sucesso');
                 history.push('/main');
@@ -135,7 +160,7 @@ function Form(props) {
             setAuditoria(data);
         }
         loadAuditoria();
-    }, []);
+    }, [id]);
 
     const auditoriaId = auditoria.filter(a => a.id === parseInt(id, 10));
 

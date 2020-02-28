@@ -32,7 +32,7 @@ export default function OperadorAuditoria(props) {
                         </h2>
                     </Link>
                 ) : auditoria.length > 0 ? (
-                    plano.length === null ? (
+                    plano.length < 1 ? (
                         <h2>
                             {' '}
                             <Emoji symbol="✔️" />{' '}

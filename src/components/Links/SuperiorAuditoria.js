@@ -41,7 +41,7 @@ export default function SuperiorAuditoria(props) {
                     </h1>
                 ) : (
                     validar.map(a =>
-                        a.subitem === subitemformat ? (
+                        a.subitem === subitemformat && a.conclusao === null ? (
                             <h2>
                                 <Link to="/planos">
                                     <Emoji symbol="❌" />

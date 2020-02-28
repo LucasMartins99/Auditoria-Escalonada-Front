@@ -13,6 +13,7 @@ import CreatePlan from '../pages/Plano/Create/index';
 import Plano from '../pages/Plano/index';
 import Auditoria from '../pages/Auditoria/index';
 import NewAuditoria from '../pages/Auditoria/New/index';
+import UpdatePlan from '../pages/Plano/Update/index';
 
 export default function Routes() {
     return (
@@ -46,6 +47,7 @@ export default function Routes() {
                 isPrivate
             />
             <Route path="/new-auditoria" component={NewAuditoria} isPrivate />
+            <Route path="/update-plan/:id" component={UpdatePlan} isPrivate />
         </Switch>
     );
 }

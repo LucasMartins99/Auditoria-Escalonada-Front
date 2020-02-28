@@ -166,10 +166,10 @@ export default function Operador() {
         a => a.cargo === 'Engenharia Processo'
     );
     const SupervisaoProducao = auditoriasGestao.filter(
-        a => a.cargo === 'Supervisão Produção'
+        a => a.cargo === 'Supervisor Produção'
     );
     const CoordenacaoProducao = auditoriasGestao.filter(
-        a => a.cargo === 'Coordenação Produção'
+        a => a.cargo === 'Coordenador Produção'
     );
     const GerenteQualidade = auditoriasGestao.filter(
         a => a.cargo === 'Gerente Qualidade'
@@ -1171,7 +1171,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSegunda}
-                                    dia={segunda}
+                                    dia={segundaBD}
                                     today={todaySegunda}
                                     auditoria={auditoriasT2Segunda}
                                     plano={planoT2Area6}
@@ -1183,7 +1183,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSegunda}
-                                    dia={segunda}
+                                    dia={segundaBD}
                                     today={todaySegunda}
                                     auditoria={auditoriasT3Segunda}
                                     plano={planoT3Area6}
@@ -1195,7 +1195,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateTerça}
-                                    dia={terça}
+                                    dia={terçaBD}
                                     today={todayTerça}
                                     auditoria={auditoriasT1Terça}
                                     plano={planoT1Area6}
@@ -1207,7 +1207,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateTerça}
-                                    dia={terça}
+                                    dia={terçaBD}
                                     today={todayTerça}
                                     auditoria={auditoriasT2Terça}
                                     plano={planoT2Area6}
@@ -1219,7 +1219,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateTerça}
-                                    dia={terça}
+                                    dia={terçaBD}
                                     today={todayTerça}
                                     auditoria={auditoriasT3Terça}
                                     plano={planoT3Area6}
@@ -1231,7 +1231,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuarta}
-                                    dia={quarta}
+                                    dia={quartaBD}
                                     today={todayQuarta}
                                     auditoria={auditoriasT1Quarta}
                                     plano={planoT1Area6}
@@ -1243,7 +1243,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuarta}
-                                    dia={quarta}
+                                    dia={quartaBD}
                                     today={todayQuarta}
                                     auditoria={auditoriasT2Quarta}
                                     plano={planoT2Area6}
@@ -1255,7 +1255,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuarta}
-                                    dia={quarta}
+                                    dia={quartaBD}
                                     today={todayQuarta}
                                     auditoria={auditoriasT3Quarta}
                                     plano={planoT3Area6}
@@ -1267,7 +1267,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuinta}
-                                    dia={quinta}
+                                    dia={quintaBD}
                                     today={todayQuinta}
                                     auditoria={auditoriasT1Quinta}
                                     plano={planoT1Area6}
@@ -1279,7 +1279,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuinta}
-                                    dia={quinta}
+                                    dia={quintaBD}
                                     today={todayQuinta}
                                     auditoria={auditoriasT2Quinta}
                                     plano={planoT2Area6}
@@ -1291,7 +1291,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuinta}
-                                    dia={quinta}
+                                    dia={quintaBD}
                                     today={todayQuinta}
                                     auditoria={auditoriasT3Quinta}
                                     plano={planoT3Area6}
@@ -1303,7 +1303,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSexta}
-                                    dia={sexta}
+                                    dia={sextaBD}
                                     today={todaySexta}
                                     auditoria={auditoriasT1Sexta}
                                     plano={planoT1Area6}
@@ -1315,7 +1315,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSexta}
-                                    dia={sexta}
+                                    dia={sextaBD}
                                     today={todaySexta}
                                     auditoria={auditoriasT2Sexta}
                                     plano={planoT2Area6}
@@ -1327,7 +1327,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSexta}
-                                    dia={sexta}
+                                    dia={sextaBD}
                                     today={todaySexta}
                                     auditoria={auditoriasT3Sexta}
                                     plano={planoT3Area6}
@@ -1339,7 +1339,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado}
                                     auditoria={auditoriasT1Sabado}
                                     plano={planoT1Area6}
@@ -1351,7 +1351,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado}
                                     auditoria={auditoriasT2Sabado}
                                     plano={planoT2Area6}
@@ -1363,7 +1363,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado}
                                     auditoria={auditoriasT3Sabado}
                                     plano={planoT3Area6}
@@ -1523,7 +1523,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSegunda}
-                                    dia={segunda}
+                                    dia={segundaBD}
                                     today={todaySegunda}
                                     auditoria={auditoriasT1Segunda}
                                     plano={planoT1Area8}
@@ -1535,7 +1535,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSegunda}
-                                    dia={segunda}
+                                    dia={segundaBD}
                                     today={todaySegunda}
                                     auditoria={auditoriasT2Segunda}
                                     plano={planoT2Area8}
@@ -1547,7 +1547,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSegunda}
-                                    dia={segunda}
+                                    dia={segundaBD}
                                     today={todaySegunda}
                                     auditoria={auditoriasT3Segunda}
                                     plano={planoT3Area8}
@@ -1559,7 +1559,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateTerça}
-                                    dia={terça}
+                                    dia={terçaBD}
                                     today={todayTerça}
                                     auditoria={auditoriasT1Terça}
                                     plano={planoT1Area8}
@@ -1571,7 +1571,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateTerça}
-                                    dia={terça}
+                                    dia={terçaBD}
                                     today={todayTerça}
                                     auditoria={auditoriasT2Terça}
                                     plano={planoT2Area8}
@@ -1583,7 +1583,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateTerça}
-                                    dia={terça}
+                                    dia={terçaBD}
                                     today={todayTerça}
                                     auditoria={auditoriasT3Terça}
                                     plano={planoT3Area8}
@@ -1595,7 +1595,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuarta}
-                                    dia={quarta}
+                                    dia={quartaBD}
                                     today={todayQuarta}
                                     auditoria={auditoriasT1Quarta}
                                     plano={planoT1Area8}
@@ -1607,7 +1607,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuarta}
-                                    dia={quarta}
+                                    dia={quartaBD}
                                     today={todayQuarta}
                                     auditoria={auditoriasT2Quarta}
                                     plano={planoT2Area8}
@@ -1619,7 +1619,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuarta}
-                                    dia={quarta}
+                                    dia={quartaBD}
                                     today={todayQuarta}
                                     auditoria={auditoriasT3Quarta}
                                     plano={planoT3Area8}
@@ -1631,7 +1631,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuinta}
-                                    dia={quinta}
+                                    dia={quintaBD}
                                     today={todayQuinta}
                                     auditoria={auditoriasT1Quinta}
                                     plano={planoT1Area8}
@@ -1643,7 +1643,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuinta}
-                                    dia={quinta}
+                                    dia={quintaBD}
                                     today={todayQuinta}
                                     auditoria={auditoriasT2Quinta}
                                     plano={planoT2Area8}
@@ -1655,7 +1655,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuinta}
-                                    dia={quinta}
+                                    dia={quintaBD}
                                     today={todayQuinta}
                                     auditoria={auditoriasT3Quinta}
                                     plano={planoT3Area8}
@@ -1667,7 +1667,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSexta}
-                                    dia={sexta}
+                                    dia={sextaBD}
                                     today={todaySexta}
                                     auditoria={auditoriasT1Sexta}
                                     plano={planoT1Area8}
@@ -1679,7 +1679,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSexta}
-                                    dia={sexta}
+                                    dia={sextaBD}
                                     today={todaySexta}
                                     auditoria={auditoriasT2Sexta}
                                     plano={planoT2Area8}
@@ -1691,7 +1691,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSexta}
-                                    dia={sexta}
+                                    dia={sextaBD}
                                     today={todaySexta}
                                     auditoria={auditoriasT3Sexta}
                                     plano={planoT3Area8}
@@ -1703,7 +1703,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado}
                                     auditoria={auditoriasT1Sabado}
                                     plano={planoT1Area8}
@@ -1715,7 +1715,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado}
                                     auditoria={auditoriasT2Sabado}
                                     plano={planoT2Area8}
@@ -1727,7 +1727,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado}
                                     auditoria={auditoriasT3Sabado}
                                     plano={planoT3Area8}
@@ -1885,7 +1885,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSegunda}
-                                    dia={segunda}
+                                    dia={segundaBD}
                                     today={todaySegunda}
                                     auditoria={auditoriasT1Segunda}
                                     plano={planoT1Area10}
@@ -1897,7 +1897,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSegunda}
-                                    dia={segunda}
+                                    dia={segundaBD}
                                     today={todaySegunda}
                                     auditoria={auditoriasT2Segunda}
                                     plano={planoT2Area10}
@@ -1909,7 +1909,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSegunda}
-                                    dia={segunda}
+                                    dia={segundaBD}
                                     today={todaySegunda}
                                     auditoria={auditoriasT3Segunda}
                                     plano={planoT3Area10}
@@ -1921,7 +1921,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateTerça}
-                                    dia={terça}
+                                    dia={terçaBD}
                                     today={todayTerça}
                                     auditoria={auditoriasT1Terça}
                                     plano={planoT1Area10}
@@ -1933,7 +1933,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateTerça}
-                                    dia={terça}
+                                    dia={terçaBD}
                                     today={todayTerça}
                                     auditoria={auditoriasT2Terça}
                                     plano={planoT2Area10}
@@ -1945,7 +1945,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateTerça}
-                                    dia={terça}
+                                    dia={terçaBD}
                                     today={todayTerça}
                                     auditoria={auditoriasT3Terça}
                                     plano={planoT3Area10}
@@ -1957,7 +1957,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuarta}
-                                    dia={quarta}
+                                    dia={quartaBD}
                                     today={todayQuarta}
                                     auditoria={auditoriasT1Quarta}
                                     plano={planoT1Area10}
@@ -1969,7 +1969,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuarta}
-                                    dia={quarta}
+                                    dia={quartaBD}
                                     today={todayQuarta}
                                     auditoria={auditoriasT2Quarta}
                                     plano={planoT2Area10}
@@ -1981,7 +1981,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuarta}
-                                    dia={quarta}
+                                    dia={quartaBD}
                                     today={todayQuarta}
                                     auditoria={auditoriasT3Quarta}
                                     plano={planoT3Area10}
@@ -1993,7 +1993,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuinta}
-                                    dia={quinta}
+                                    dia={quintaBD}
                                     today={todayQuinta}
                                     auditoria={auditoriasT1Quinta}
                                     plano={planoT1Area10}
@@ -2005,7 +2005,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuinta}
-                                    dia={quinta}
+                                    dia={quintaBD}
                                     today={todayQuinta}
                                     auditoria={auditoriasT2Quinta}
                                     plano={planoT2Area10}
@@ -2017,7 +2017,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateQuinta}
-                                    dia={quinta}
+                                    dia={quintaBD}
                                     today={todayQuinta}
                                     auditoria={auditoriasT3Quinta}
                                     plano={planoT3Area10}
@@ -2029,7 +2029,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSexta}
-                                    dia={sexta}
+                                    dia={sextaBD}
                                     today={todaySexta}
                                     auditoria={auditoriasT1Sexta}
                                     plano={planoT1Area10}
@@ -2041,7 +2041,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSexta}
-                                    dia={sexta}
+                                    dia={sextaBD}
                                     today={todaySexta}
                                     auditoria={auditoriasT2Sexta}
                                     plano={planoT2Area10}
@@ -2053,7 +2053,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSexta}
-                                    dia={sexta}
+                                    dia={sextaBD}
                                     today={todaySexta}
                                     auditoria={auditoriasT3Sexta}
                                     plano={planoT3Area10}
@@ -2065,7 +2065,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado}
                                     auditoria={auditoriasT1Sabado}
                                     plano={planoT1Area10}
@@ -2077,7 +2077,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado}
                                     auditoria={auditoriasT2Sabado}
                                     plano={planoT2Area10}
@@ -2089,7 +2089,7 @@ export default function Operador() {
                             <td className="a">
                                 <OperadorAuditoria
                                     late={lateSabado}
-                                    dia={sabado}
+                                    dia={sabadoBD}
                                     today={todaySabado}
                                     auditoria={auditoriasT3Sabado}
                                     plano={planoT3Area10}

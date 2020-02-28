@@ -77,6 +77,7 @@ function Auditoria(props) {
     const [auditoria2, setAuditoria2] = useState([]);
     const [auditoria3, setAuditoria3] = useState([]);
     const [auditor, setAuditor] = useState('Todos');
+    const [user, setUser] = useState([]);
     const [date, setDate] = useState(new Date());
     const [date2, setDate2] = useState(new Date());
     const [cargo, setCargo] = useState('Todos');
@@ -159,6 +160,17 @@ function Auditoria(props) {
         setAuditoria3(data);
     }, [auditoria2]);
 
+    useEffect(() => {
+        async function loadUsers() {
+            const response = await api.get('/users');
+            const data = response.data.map(a => ({
+                ...a,
+            }));
+            setUser(data);
+        }
+        loadUsers();
+    }, []);
+
     function handleNextMonth() {
         setDate(addMonths(date, 1));
         setAuditor('Todos');
@@ -228,9 +240,14 @@ function Auditoria(props) {
                         value={auditor}
                         onChange={handleAuditor}
                     >
-                        <option value="Todos">Todos</option>
-                        <option value="Fabio">Fabio</option>
-                        <option value="Jose">Jose</option>
+                        <option selected value="Todos">
+                            Todos
+                        </option>
+                        {user.map(u => (
+                            <option key={u.name} value={u.name}>
+                                {u.name}
+                            </option>
+                        ))}
                     </Select>
                 </FormControl>
                 <FormControl variant="outlined" className={classes.FormControl}>
