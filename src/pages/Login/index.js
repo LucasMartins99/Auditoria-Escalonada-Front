@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Input } from '@rocketseat/unform';
-import { Link } from 'react-router-dom';
+
 import * as Yup from 'yup';
 import { loginRequest } from '~/store/modules/auth/actions';
 import logo from '~/assets/imagens/logo.PNG';
