@@ -34,8 +34,6 @@ export default function Login() {
                 <button type="submit">
                     {loading ? 'Carregando...' : 'Acessar'}
                 </button>
-
-                <Link to="/register">Criar uma conta</Link>
             </Form>
         </>
     );

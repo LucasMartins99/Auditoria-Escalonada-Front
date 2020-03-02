@@ -145,7 +145,6 @@ function Form(props) {
                     data,
                 });
                 toast.success('Auditoria atribuida com sucesso');
-                history.push('/main');
             } catch (err) {
                 toast.error('Falha na atribuição da auditoria');
             }

@@ -214,7 +214,7 @@ export default function Operador() {
 
     const planoT3 = plano.filter(c => c.auditoria.turno === '3');
     const planoT3Area1 = planoT3.filter(a => a.subitem === 1).slice(0, 1);
-    const planoT3Area2 = planoT3.filter(a => a.subitem === 2).slice(0, 1);
+    const planoT3Area2 = planoT3.filter(a => a.subitem === 2);
     const planoT3Area6 = planoT3.filter(a => a.subitem === 6).slice(0, 1);
     const planoT3Area8 = planoT3.filter(a => a.subitem === 8).slice(0, 1);
     const planoT3Area10 = planoT3.filter(a => a.subitem === 10).slice(0, 1);
@@ -344,6 +344,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -356,6 +357,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -368,6 +370,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -380,6 +383,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -392,6 +396,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -404,6 +409,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -416,6 +422,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -428,6 +435,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -440,6 +448,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -452,6 +461,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -464,6 +474,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -476,6 +487,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -488,6 +500,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -500,6 +513,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -512,6 +526,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -524,6 +539,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -536,6 +552,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
 
@@ -549,6 +566,7 @@ export default function Operador() {
                                     subItem="1"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td>
@@ -606,6 +624,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -618,6 +637,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -630,6 +650,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -642,6 +663,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -654,6 +676,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -666,6 +689,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -678,6 +702,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -690,6 +715,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -702,6 +728,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -714,6 +741,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -726,6 +754,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -738,6 +767,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -750,6 +780,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -762,6 +793,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -774,6 +806,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -786,6 +819,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -798,6 +832,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -810,6 +845,7 @@ export default function Operador() {
                                     subItem="2"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td>
@@ -1166,6 +1202,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1178,6 +1215,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1190,6 +1228,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1202,6 +1241,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1214,6 +1254,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1226,6 +1267,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1238,6 +1280,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1250,6 +1293,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1262,6 +1306,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1274,6 +1319,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1286,6 +1332,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1298,6 +1345,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1310,6 +1358,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1322,6 +1371,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1334,6 +1384,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1346,6 +1397,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1358,6 +1410,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1370,6 +1423,7 @@ export default function Operador() {
                                     subItem="6"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td>
@@ -1530,6 +1584,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1542,6 +1597,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1554,6 +1610,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1566,6 +1623,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1578,6 +1636,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1590,6 +1649,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1602,6 +1662,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1614,6 +1675,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1626,6 +1688,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1638,6 +1701,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1650,6 +1714,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1662,6 +1727,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1674,6 +1740,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1686,6 +1753,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1698,6 +1766,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1710,6 +1779,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1722,6 +1792,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1734,6 +1805,7 @@ export default function Operador() {
                                     subItem="8"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td>
@@ -1892,6 +1964,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1904,6 +1977,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1916,6 +1990,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1928,6 +2003,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1940,6 +2016,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1952,6 +2029,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1964,6 +2042,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1976,6 +2055,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -1988,6 +2068,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -2000,6 +2081,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -2012,6 +2094,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -2024,6 +2107,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -2036,6 +2120,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -2048,6 +2133,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -2060,6 +2146,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -2072,6 +2159,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="1"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -2084,6 +2172,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="2"
+                                    setor={setor}
                                 />
                             </td>
                             <td className="a">
@@ -2096,6 +2185,7 @@ export default function Operador() {
                                     subItem="10"
                                     semana={actualWeek}
                                     turno="3"
+                                    setor={setor}
                                 />
                             </td>
                             <td>

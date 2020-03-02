@@ -57,7 +57,7 @@ export function* addToPlan({
             status,
         });
         toast.success('Ação cadastrada com sucesso');
-        history.push('/main');
+        history.push(`/create-plano-operador/${data}`);
     } else {
         yield call(api.put, `/auditoria/${auditoria_id}`, {
             status,

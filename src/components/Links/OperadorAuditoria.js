@@ -16,10 +16,11 @@ export default function OperadorAuditoria(props) {
         subItem,
         semana,
         turno,
+        setor,
     } = props;
 
     const aux = parseInt(subItem, 0);
-
+    const plano2 = plano.filter(a => a.setor === setor);
     return (
         <Container>
             <button type="button">
@@ -32,18 +33,19 @@ export default function OperadorAuditoria(props) {
                         </h2>
                     </Link>
                 ) : auditoria.length > 0 ? (
-                    plano.length < 1 ? (
+                    plano2.length < 1 ? (
                         <h2>
                             {' '}
                             <Emoji symbol="✔️" />{' '}
                         </h2>
                     ) : (
-                        plano.map(p => (
+                        plano2.map(p => (
                             <h2>
                                 {p.subitem === aux &&
                                 p.conclusao === null &&
                                 p.auditoria.turno === turno &&
-                                p.data === dia ? (
+                                p.data === dia &&
+                                p.setor === setor ? (
                                     <Link to="/planos">
                                         <Emoji symbol="❌" />
                                     </Link>

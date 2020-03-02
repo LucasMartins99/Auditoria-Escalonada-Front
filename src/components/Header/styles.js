@@ -9,7 +9,7 @@ export const Container = styled.header`
     justify-content: center;
     align-items: center;
     ${media.lessThan('medium')`
-    min-width: 900px;
+    min-width: 1200px;
     `}
 `;
 export const Content = styled.div`

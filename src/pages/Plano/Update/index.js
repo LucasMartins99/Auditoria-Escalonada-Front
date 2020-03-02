@@ -15,7 +15,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
-import { MdReply } from 'react-icons/md';
+
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
@@ -356,9 +356,6 @@ function UpdatePlan(props) {
     return (
         <Container>
             <header>
-                <button type="button">
-                    <MdReply size={40} color="#000" />
-                </button>
                 <strong>Alterar plano de ação</strong>
             </header>
             <Center>

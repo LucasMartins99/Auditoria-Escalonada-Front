@@ -12,7 +12,7 @@ export const Container = styled.div`
             background: none;
         }
         strong {
-            color: #fff;
+            color: black;
             font-size: 40px;
             margin: 0 15px;
         }
