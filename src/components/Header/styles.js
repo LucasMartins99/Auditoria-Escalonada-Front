@@ -14,7 +14,7 @@ export const Container = styled.header`
 `;
 export const Content = styled.div`
     ${media.lessThan('medium')`
-    max-width: 1100px;
+    max-width: 1200px;
     `}
 
     height: 64px;
