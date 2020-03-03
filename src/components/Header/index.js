@@ -19,20 +19,22 @@ export default function Header() {
                         <Link to="/main">
                             <li>HOME</li>
                         </Link>
+
                         <Link to="/auditoria">
                             <li>AUDITORIAS</li>
                         </Link>
                         <Link to="/planos">
                             <li>AÇÕES</li>
                         </Link>
-                        <Link to="/indicadores">
-                            <li>INDICADORES</li>
-                        </Link>
+
                         <Link to="/new-auditoria">
                             <li>ATRIBUIR</li>
                         </Link>
                         <Link to="/operador">
                             <li>GV</li>
+                        </Link>
+                        <Link to="/matriz">
+                            <li>MATRIZ</li>
                         </Link>
                         <Link to="/">
                             <li onClick={handleSignOut}>SAIR</li>
