@@ -19,6 +19,11 @@ const options = [
     { id: 'Plant Manager', title: 'Plant Manager' },
     { id: 'Engenharia', title: 'Engenharia' },
     { id: 'Admnistrador', title: 'Admnistrador' },
+    { id: 'Ferramentaria', title: 'Ferramentaria' },
+    { id: 'Logistica', title: 'Logistica' },
+    { id: 'Manutenção', title: 'Manutenção' },
+    { id: 'RH', title: 'RH' },
+    { id: 'Segurança', title: 'Segurança' },
 ];
 
 const schema = Yup.object().shape({

@@ -34,6 +34,8 @@ export default function auditoria(state = [], action) {
                 const { question } = action;
                 draft.splice(question);
             });
+        case '@auditoria/ADD_SUCCESS':
+            return state;
         default:
             return state;
     }

@@ -31,7 +31,7 @@ export default function Routes() {
                 isPrivate
             />
             <Route
-                path="/create-auditoria-operador/:id/:semana/:turno"
+                path="/create-auditoria-operador/:id/:semana/:turno/:setor"
                 component={CreateAuditoria}
                 isPrivate
             />

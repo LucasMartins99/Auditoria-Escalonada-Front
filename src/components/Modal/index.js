@@ -28,11 +28,10 @@ const styles = theme => ({
     },
 });
 function ModalForm(props) {
-    const { classes, data, semana, turno } = props;
+    const { classes, data, semana, turno, setor } = props;
     const [open, setOpen] = useState(true);
     const [name, setName] = useState('');
     const [re, setRe] = useState('');
-    const setor = useSelector(state => state.user.profile.area);
     const cargo = useSelector(state => state.user.profile.cargo);
 
     const handleName = event => {
@@ -48,6 +47,7 @@ function ModalForm(props) {
         );
         setOpen(false);
     };
+
     return (
         <Modal
             aria-labelledby="transition-modal-title"

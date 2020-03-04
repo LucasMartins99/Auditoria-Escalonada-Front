@@ -58,7 +58,7 @@ export default function OperadorAuditoria(props) {
                 ) : !late && !today ? (
                     <h2>
                         <Link
-                            to={`/create-auditoria-operador/${dia}/${semana}/${turno}`}
+                            to={`/create-auditoria-operador/${dia}/${semana}/${turno}/${setor}`}
                         >
                             <Emoji symbol="➖" />
                         </Link>

@@ -1,6 +1,7 @@
 import { call, put, all, takeLatest } from 'redux-saga/effects';
 import { format } from 'date-fns';
 import pt from 'date-fns/locale/pt';
+import { toast } from 'react-toastify';
 import { addToSetorSucess } from '../setor/actions';
 import api from '~/services/api';
 
@@ -23,5 +24,6 @@ function* addToOperador({ payload }) {
         ano,
     });
     yield put(addToSetorSucess(response.data));
+    toast.warn('Responda as questões abaixo');
 }
 export default all([takeLatest('@operador/ADD_REQUEST', addToOperador)]);

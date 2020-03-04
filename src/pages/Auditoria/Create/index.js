@@ -16,12 +16,14 @@ class Auditoria extends Component {
         data2: '',
         semana: '',
         turno: '',
+        setor: '',
     };
     async componentDidMount() {
         const {match: {params}} = this.props;
         this.setState({data2: params.id});
         this.setState({semana: params.semana});
         this.setState({turno: params.turno});
+        this.setState({setor: params.setor});
         if(params.id !== undefined){
             const response = await api.get('question-operador');
             this.setState({ questions: response.data });
@@ -123,6 +125,7 @@ class Auditoria extends Component {
         const {data2} = this.state;
         const {semana} = this.state;
         const {turno} = this.state;
+        const {setor} = this.state;
         function handleBack() {
             history.push('/main');
         }
@@ -136,7 +139,7 @@ class Auditoria extends Component {
                     </button>
                     <strong>Formulario Auditoria</strong>
                 </header>
-                {data2 !== undefined && <ModalForm data={data2} semana={semana} turno={turno} /> }
+                {data2 !== undefined && <ModalForm data={data2} semana={semana} turno={turno} setor={setor} /> }
                 <TableDiv>
                     <Table striped bordered hover variant="dark">
                         <thead>

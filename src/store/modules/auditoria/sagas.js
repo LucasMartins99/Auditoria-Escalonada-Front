@@ -23,30 +23,31 @@ function* addToAuditoria({ auditoria_id, cargo }) {
     const status = 'Realizado';
     const dataAtual = new Date();
     const data = format(dataAtual, 'yyyy/MM/dd', { locale: pt });
+
     if (cargo === 'Operador') {
         try {
-            yield call(api.put, `/auditoria/${auditoria_id}`, {
+            const response = yield call(api.put, `/auditoria/${auditoria_id}`, {
                 status,
             });
             toast.success('Auditoria Realizado com sucesso');
-            yield put(addAuditoriaSuccess);
+            yield put(addAuditoriaSuccess(response.data));
             history.push('/operador');
         } catch (err) {
-            toast.error('Error ao realizar auditoria');
-            yield put(addAuditoriaFailure);
+            toast.error('Error auditoria');
+            yield put(addAuditoriaFailure());
         }
     } else {
         try {
-            yield call(api.put, `/auditoria/${auditoria_id}`, {
+            const response = yield call(api.put, `/auditoria/${auditoria_id}`, {
                 status,
                 data,
             });
             toast.success('Auditoria Realizado com sucesso');
-            yield put(addAuditoriaSuccess);
+            yield put(addAuditoriaSuccess(response.data));
             history.push('/main');
         } catch (err) {
-            /* toast.error('Error ao realizar auditoria'); */
-            yield put(addAuditoriaFailure);
+            toast.error('Error auditoria');
+            yield put(addAuditoriaFailure());
         }
     }
 }
