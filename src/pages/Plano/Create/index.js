@@ -173,7 +173,7 @@ function CreatePlan(props) {
             case 'Linha de Forjas':
                 setMaquinas(forjas);
                 break;
-            case 'Linha de Tubulares':
+            case 'Linha Tubulares':
                 setMaquinas(tubular);
                 break;
             case 'Usinagem/Recalque':

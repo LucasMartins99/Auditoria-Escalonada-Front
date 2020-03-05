@@ -94,7 +94,7 @@ function Matriz(props) {
 
     useEffect(() => {
         async function loadAuditoria() {
-            const response = await api.get('auditoria-mes', {
+            const response = await api.get('matriz', {
                 params: { firstWeek, lastWeek, date2 },
             });
             const data = response.data.map(a => {
@@ -169,6 +169,7 @@ function Matriz(props) {
         setDate2(subYears(date2, 1));
         setAuditor('Todos');
     }
+
     return (
         <Container>
             <header>

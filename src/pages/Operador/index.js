@@ -199,29 +199,30 @@ export default function Operador() {
     const auditoriasT3Sabado = auditoriasT3.filter(x => x.data === sabadoBD);
 
     const planoT1 = plano.filter(a => a.auditoria.turno === '1');
-    const planoT1Area1 = planoT1.filter(a => a.subitem === 1).slice(0, 1);
-    const planoT1Area2 = planoT1.filter(a => a.subitem === 2).slice(0, 1);
-    const planoT1Area6 = planoT1.filter(a => a.subitem === 6).slice(0, 1);
-    const planoT1Area8 = planoT1.filter(a => a.subitem === 8).slice(0, 1);
-    const planoT1Area10 = planoT1.filter(a => a.subitem === 10).slice(0, 1);
+    const planoT1Area1 = planoT1.filter(a => a.subitem === 1);
+    const planoT1Area2 = planoT1.filter(a => a.subitem === 2);
+    const planoT1Area6 = planoT1.filter(a => a.subitem === 6);
+    const planoT1Area8 = planoT1.filter(a => a.subitem === 8);
+    const planoT1Area10 = planoT1.filter(a => a.subitem === 10);
 
     const planoT2 = plano.filter(b => b.auditoria.turno === '2');
-    const planoT2Area1 = planoT2.filter(a => a.subitem === 1).slice(0, 1);
-    const planoT2Area2 = planoT2.filter(a => a.subitem === 2).slice(0, 1);
-    const planoT2Area6 = planoT2.filter(a => a.subitem === 6).slice(0, 1);
-    const planoT2Area8 = planoT2.filter(a => a.subitem === 8).slice(0, 1);
-    const planoT2Area10 = planoT2.filter(a => a.subitem === 10).slice(0, 1);
+    const planoT2Area1 = planoT2.filter(a => a.subitem === 1);
+    const planoT2Area2 = planoT2.filter(a => a.subitem === 2);
+    const planoT2Area6 = planoT2.filter(a => a.subitem === 6);
+    const planoT2Area8 = planoT2.filter(a => a.subitem === 8);
+    const planoT2Area10 = planoT2.filter(a => a.subitem === 10);
 
     const planoT3 = plano.filter(c => c.auditoria.turno === '3');
-    const planoT3Area1 = planoT3.filter(a => a.subitem === 1).slice(0, 1);
+    const planoT3Area1 = planoT3.filter(a => a.subitem === 1);
     const planoT3Area2 = planoT3.filter(a => a.subitem === 2);
-    const planoT3Area6 = planoT3.filter(a => a.subitem === 6).slice(0, 1);
-    const planoT3Area8 = planoT3.filter(a => a.subitem === 8).slice(0, 1);
-    const planoT3Area10 = planoT3.filter(a => a.subitem === 10).slice(0, 1);
+    const planoT3Area6 = planoT3.filter(a => a.subitem === 6);
+    const planoT3Area8 = planoT3.filter(a => a.subitem === 8);
+    const planoT3Area10 = planoT3.filter(a => a.subitem === 10);
 
     const handleSetor = event => {
         setSetor(event.target.value);
     };
+
     return (
         <Container>
             <header>

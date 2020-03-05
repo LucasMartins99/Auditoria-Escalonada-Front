@@ -12,11 +12,11 @@ import { FormControl, FormHelperText } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import { getISOWeek, getYear } from 'date-fns';
 import { useForm } from 'react-hook-form';
-
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
+import { Div } from './styles';
 import api from '~/services/api';
 import history from '~/services/history';
 
@@ -45,6 +45,9 @@ const styles = theme => ({
     span: {
         paddingLeft: 90,
     },
+    spanText: {
+        paddingLeft: 130,
+    },
     data: {
         marginLeft: 12,
     },
@@ -54,6 +57,12 @@ const styles = theme => ({
     },
     option: {
         minWidth: 230,
+    },
+    textField: {
+        paddingTop: 10,
+    },
+    semana: {
+        width: 250,
     },
 });
 
@@ -66,7 +75,6 @@ function Form(props) {
     const [status] = useState('Planejado');
     const [users, setUsers] = useState([]);
     const [turno] = useState('adm');
-
     const [auditoria, setAuditoria] = useState([]);
     const { register, handleSubmit } = useForm();
 
@@ -85,7 +93,13 @@ function Form(props) {
         setDate2(date2);
     }
     async function onSubmit(data) {
-        const semana = getISOWeek(date2);
+        let semana;
+        if (id !== undefined) {
+            semana = data.semana;
+        } else {
+            semana = getISOWeek(date2);
+        }
+
         const actualSemana = getISOWeek(new Date());
         const ano = getYear(date2);
         const { auditor, setor, obs } = data;
@@ -175,17 +189,12 @@ function Form(props) {
                         SETOR:
                     </FormHelperText>
                     <Select native inputRef={register} name="setor">
-                        {id !== undefined ? (
+                        {id !== undefined &&
                             auditoriaId.map(a => (
                                 <option selected value={a.setor}>
                                     {a.setor}
                                 </option>
-                            ))
-                        ) : (
-                            <option selected value="ESCOLHA">
-                                Escolha
-                            </option>
-                        )}
+                            ))}
 
                         <option value="Linha Tubulares">Linha Tubulares</option>
                         <option value="Linha de Forjas">Linha de Forjas</option>
@@ -223,17 +232,12 @@ function Form(props) {
                         AUDITOR:
                     </FormHelperText>
                     <Select inputRef={register} name="auditor" native>
-                        {id !== undefined ? (
+                        {id !== undefined &&
                             auditoriaId.map(a => (
                                 <option selected value={a.auditor}>
                                     {a.auditor}
                                 </option>
-                            ))
-                        ) : (
-                            <option selected value="ESCOLHA">
-                                Escolha
-                            </option>
-                        )}
+                            ))}
                         {users.map(u => (
                             <option key={u.name} value={u.name}>
                                 {u.name}
@@ -241,51 +245,66 @@ function Form(props) {
                         ))}
                     </Select>
                 </FormControl>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <FormHelperText className={classes.text} />
 
-                    <KeyboardDatePicker
-                        className={classes.data}
-                        disableToolbar
-                        variant="outlined"
-                        format="dd-MM-yyyy"
-                        label="DATA LIMITE"
-                        id="date-picker-inline"
-                        inputRef={register}
-                        name="date"
-                        value={date2}
-                        onChange={handleDate}
-                        KeyboardButtonProps={{
-                            'arial-label': 'change date',
-                        }}
-                    />
-                </MuiPickersUtilsProvider>
-
-                <span className={classes.span} />
-                {id !== undefined ? (
-                    auditoriaId.map(() => (
+                <Div>
+                    {id !== undefined ? (
+                        auditoriaId.map(a => (
+                            <TextField
+                                type="number"
+                                defaultValue={a.semana}
+                                className={classes.semana}
+                                inputRef={register}
+                                name="semana"
+                                variant="outlined"
+                                placeholder="Semana"
+                            />
+                        ))
+                    ) : (
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <FormHelperText className={classes.text} />
+                            <KeyboardDatePicker
+                                className={classes.data}
+                                disableToolbar
+                                variant="outlined"
+                                format="dd-MM-yyyy"
+                                label="DATA LIMITE"
+                                id="date-picker-inline"
+                                inputRef={register}
+                                name="date"
+                                value={date2}
+                                onChange={handleDate}
+                                KeyboardButtonProps={{
+                                    'arial-label': 'change date',
+                                }}
+                            />
+                        </MuiPickersUtilsProvider>
+                    )}
+                    <span className={classes.span} />
+                    {id !== undefined ? (
+                        auditoriaId.map(a => (
+                            <TextField
+                                id="outline-multiline-static"
+                                label="OBSERVAÇÃO"
+                                defaultValue={a.obs}
+                                multiline
+                                row="10"
+                                inputRef={register}
+                                name="obs"
+                                variant="outlined"
+                            />
+                        ))
+                    ) : (
                         <TextField
                             id="outline-multiline-static"
                             label="OBSERVAÇÃO"
                             multiline
                             row="10"
-                            inputRef={register}
-                            name="obs"
                             variant="outlined"
+                            name="obs"
+                            inputRef={register}
                         />
-                    ))
-                ) : (
-                    <TextField
-                        id="outline-multiline-static"
-                        label="OBSERVAÇÃO"
-                        multiline
-                        row="10"
-                        variant="outlined"
-                        name="obs"
-                        inputRef={register}
-                    />
-                )}
-
+                    )}
+                </Div>
                 <div className={classes.button2}>
                     <Button
                         variant="outlined"

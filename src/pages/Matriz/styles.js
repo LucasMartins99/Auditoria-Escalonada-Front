@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import media from 'styled-media-query';
 
 export const Container = styled.div`
-    padding-top: 40px;
     display: flex;
     flex-direction: column;
     ${media.lessThan('medium')`

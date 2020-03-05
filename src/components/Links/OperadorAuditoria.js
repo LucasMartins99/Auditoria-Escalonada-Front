@@ -21,12 +21,13 @@ export default function OperadorAuditoria(props) {
 
     const aux = parseInt(subItem, 0);
     const plano2 = plano.filter(a => a.setor === setor);
+
     return (
         <Container>
             <button type="button">
                 {today && auditoria.length < 1 ? (
                     <Link
-                        to={`/create-auditoria-operador/${dia}/${semana}/${turno}`}
+                        to={`/create-auditoria-operador/${dia}/${semana}/${turno}/${setor}`}
                     >
                         <h2>
                             <Emoji symbol="✏️" />

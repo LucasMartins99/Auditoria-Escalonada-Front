@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const Container = styled.div`
+    background: linear-gradient(-90deg, white, grey);
     margin: 30px auto;
     display: flex;
     flex-direction: column;

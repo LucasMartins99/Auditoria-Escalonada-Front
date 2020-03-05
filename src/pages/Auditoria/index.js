@@ -76,6 +76,7 @@ function Auditoria(props) {
     const [auditoria, setAuditoria] = useState([]);
     const [auditoria2, setAuditoria2] = useState([]);
     const [auditoria3, setAuditoria3] = useState([]);
+    const [auditoria4, setAuditoria4] = useState([]);
     const [auditor, setAuditor] = useState('Todos');
     const [user, setUser] = useState([]);
     const [date, setDate] = useState(new Date());
@@ -212,6 +213,20 @@ function Auditoria(props) {
         setAuditor('Todos');
         setCargo('Todos');
     };
+
+    useEffect(() => {
+        const data = auditoria3.sort(function(a, b) {
+            if (a.status > b.status) {
+                return 1;
+            }
+            if (a.status < b.status) {
+                return -1;
+            }
+
+            return 0;
+        });
+        setAuditoria4(data);
+    }, [auditoria3]);
 
     return (
         <Container>
@@ -350,7 +365,7 @@ function Auditoria(props) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {auditoria3.map(a => (
+                            {auditoria4.map(a => (
                                 <TableRow>
                                     {a.aux === 'Planejado' ? (
                                         <TableCell className={classes.orange}>

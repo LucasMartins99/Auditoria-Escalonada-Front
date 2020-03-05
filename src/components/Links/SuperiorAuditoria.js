@@ -23,7 +23,10 @@ export default function SuperiorAuditoria(props) {
         }
     }, [aux]);
 
-    const validar = plano.filter(p => p.auditoria.id === id);
+    const validar2 = plano.filter(p => p.auditoria.id === id);
+    const validar = validar2
+        .filter(p => p.subitem === subitemformat)
+        .slice(0, 1);
 
     function formatDate(date) {
         const dia = date.split('-')[2];

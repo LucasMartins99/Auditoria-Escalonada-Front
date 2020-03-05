@@ -20,15 +20,27 @@ export default function Routes() {
     return (
         <Switch>
             <Route path="/" exact component={Login} />
-            <Route path="/register" component={CreateUser} isPrivate />
-            <Route path="/main" component={Main} isPrivate />
+            <Route
+                path="/register"
+                component={CreateUser}
+                isPrivate
+                notOperador
+                isAdm
+            />
+            <Route path="/main" component={Main} isPrivate notOperador />
             <Route path="/operador" component={Operador} isPrivate />
             <Route path="/planos" component={Plano} isPrivate />
-            <Route path="/auditoria" component={Auditoria} isPrivate />
+            <Route
+                path="/auditoria"
+                component={Auditoria}
+                isPrivate
+                notOperador
+            />
             <Route
                 path="/create-auditoria"
                 component={CreateAuditoria}
                 isPrivate
+                notOperador
             />
             <Route
                 path="/create-auditoria-operador/:id/:semana/:turno/:setor"
@@ -40,16 +52,40 @@ export default function Routes() {
                 component={CreatePlan}
                 isPrivate
             />
-            <Route path="/create-plano" component={CreatePlan} isPrivate />
+            <Route
+                path="/create-plano"
+                component={CreatePlan}
+                isPrivate
+                notOperador
+            />
 
             <Route
                 path="/new-auditoria/:id"
                 component={NewAuditoria}
                 isPrivate
+                notOperador
+                isAdm
             />
-            <Route path="/new-auditoria" component={NewAuditoria} isPrivate />
-            <Route path="/update-plan/:id" component={UpdatePlan} isPrivate />
-            <Route path="/matriz" component={Matriz} isPrivate />
+            <Route
+                path="/new-auditoria"
+                component={NewAuditoria}
+                isPrivate
+                notOperador
+                isAdm
+            />
+            <Route
+                path="/update-plan/:id"
+                component={UpdatePlan}
+                isPrivate
+                notOperador
+            />
+            <Route
+                path="/matriz"
+                component={Matriz}
+                isPrivate
+                notOperador
+                isAdm
+            />
         </Switch>
     );
 }

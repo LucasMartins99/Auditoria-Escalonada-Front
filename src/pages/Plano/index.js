@@ -178,6 +178,9 @@ function Plano(props) {
                                     STATUS
                                 </TableCell>
                                 <TableCell className={classes.head}>
+                                    AUDITOR
+                                </TableCell>
+                                <TableCell className={classes.head}>
                                     ITEM
                                 </TableCell>
                                 <TableCell className={classes.head}>
@@ -230,6 +233,7 @@ function Plano(props) {
                                     ) : (
                                         ''
                                     )}
+                                    <TableCell>{p.auditoria.auditor}</TableCell>
                                     <TableCell>{p.question.text}</TableCell>
                                     <TableCell>{p.setor}</TableCell>
                                     <TableCell>{p.maquina}</TableCell>

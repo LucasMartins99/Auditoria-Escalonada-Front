@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import media from 'styled-media-query';
 
 export const Container = styled.div`
     max-width: 1100px;
+    ${media.lessThan('medium')`
+    max-width:700px;
+`}
     margin: 50px auto;
     display: flex;
     flex-direction: column;
