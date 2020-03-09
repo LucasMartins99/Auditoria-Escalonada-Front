@@ -1,6 +1,6 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://192.168.0.100:3033',
+    baseURL: 'https://devfabiolima.com',
 });
 export default api;
