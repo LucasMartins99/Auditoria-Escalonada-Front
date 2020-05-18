@@ -11,19 +11,11 @@ export const Container = styled.header`
     ${media.lessThan('medium')`
     min-width: 1300px;
     `}
+    ${media.lessThan('small')`
+    min-width: 100px;
+    `}
 `;
 export const Content = styled.div`
-    ${media.lessThan('medium')`
-    max-width: 1200px;
-    `}
-
-    height: 64px;
-
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
     nav {
         display: flex;
         align-items: center;

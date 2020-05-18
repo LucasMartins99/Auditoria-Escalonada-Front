@@ -1,7 +1,12 @@
 import styled from 'styled-components';
+import media from 'styled-media-query';
 
 export const Container = styled.div`
-    max-width: 600px;
+    min-height: 448px;
+    max-width: 630px;
+    ${media.lessThan('small')`
+        height: 100%;
+    `}
     margin: 50px auto;
     display: flex;
     flex-direction: column;

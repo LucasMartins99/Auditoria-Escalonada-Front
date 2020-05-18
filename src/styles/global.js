@@ -15,12 +15,14 @@ export default createGlobalStyle`
 
 body, input, button {
     font: 14px 'Roboto', sans-serif;
+    
 }
 body {
     -webkit-font-smoothing: antialiased;
 }
 html, body, #root{
     height:100%;
+    width: 100%;
     
 }
 button{

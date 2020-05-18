@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import media from 'styled-media-query';
 
 export const Container = styled.div`
+    min-height: 548px;
     display: flex;
     flex-direction: column;
     ${media.lessThan('medium')`
