@@ -6,7 +6,6 @@ import Emoji from 'a11y-react-emoji';
 import { Container } from './styles';
 
 export default function OperadorAuditoria(props) {
-    // eslint-disable-next-line react/prop-types
     const {
         late,
         today,

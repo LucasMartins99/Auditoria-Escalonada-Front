@@ -77,7 +77,6 @@ export default function Main() {
             <ul>
                 {agenda.map(auditoria => (
                     <Time
-                        key={auditoria.id}
                         atrasado={
                             auditoria.status === 'Realizado'
                                 ? false

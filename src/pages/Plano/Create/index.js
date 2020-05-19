@@ -55,7 +55,6 @@ function CreatePlan(props) {
     const { classes } = props;
     const dispatch = useDispatch();
     const profile = useSelector(state => state.user.profile);
-    const operador = useSelector(state => state.operador.name);
     const setor = useSelector(state => state.setor.setor);
     const cargo = useSelector(state => state.user.profile.cargo);
     const loading = useSelector(state => state.plan.loading);
@@ -329,7 +328,11 @@ function CreatePlan(props) {
 
                                     <TextField
                                         name="auditor"
-                                        value={operador || profile.name}
+                                        value={
+                                            setor.auditor === undefined
+                                                ? profile.name
+                                                : setor.auditor
+                                        }
                                         variant="outlined"
                                         inputRef={register}
                                     />
@@ -474,7 +477,11 @@ function CreatePlan(props) {
 
                                     <TextField
                                         name="auditor"
-                                        value={profile.name}
+                                        value={
+                                            setor.auditor === undefined
+                                                ? profile.name
+                                                : setor.auditor
+                                        }
                                         variant="outlined"
                                         inputRef={register}
                                     />

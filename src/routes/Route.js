@@ -8,13 +8,9 @@ import DefaultLayout from '../pages/_layouts/default';
 import { store } from '~/store';
 
 export default function RouteWrapper({
-    // eslint-disable-next-line react/prop-types
     component: Component,
-    // eslint-disable-next-line react/prop-types
     isPrivate,
-    // eslint-disable-next-line react/prop-types
     notOperador,
-    // eslint-disable-next-line react/prop-types
     isAdm,
     ...rest
 }) {
@@ -58,7 +54,7 @@ export default function RouteWrapper({
     );
 }
 // eslint-disable-next-line react/no-typos
-RouteWrapper.PropTypes = {
+RouteWrapper.propTypes = {
     isPrivate: PropTypes.bool,
     notOperador: PropTypes.bool,
     isAdm: PropTypes.bool,

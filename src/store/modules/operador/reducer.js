@@ -11,9 +11,9 @@ export default function operador(state = INITIAL_STATE, action) {
     switch (action.type) {
         case '@operador/ADD_SUCESS':
             return produce(state, draft => {
-                draft.name = action.payload.name;
+                draft.name = action.payload.auditor;
                 draft.turno = action.payload.turno;
-                draft.data = action.payload.turno;
+                draft.data = action.payload.data;
                 draft.auditoria_id = action.payload.id;
             });
         case '@operador/OUT_SUCCESS':
